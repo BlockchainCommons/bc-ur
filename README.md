@@ -21,7 +21,8 @@ This sequence runs the module's unit tests.
 #include <bc-ur/bc-ur.hpp>
 ```
 
-The highest-level APIs are found in `urencoder.hpp` and `urdecoder.hpp`.
+The highest-level APIs are found in `ur-encoder.hpp` and `ur-decoder.hpp`.
+
 ## Notes for Maintainers
 
 Before accepting a PR that can affect build or unit tests, make sure the following sequence of commands succeeds:
