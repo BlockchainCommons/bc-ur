@@ -102,6 +102,6 @@ You can import a key by running the following command with that individual’s f
 
 ## Version History
 
-### 0.1.0, xx/xx/2020
+### 0.1.0, 08/09/2020
 
-* Initial release.
+* Initial testing release.
