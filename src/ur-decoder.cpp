@@ -12,7 +12,7 @@ using namespace std;
 
 namespace ur {
 
-UR UrDecoder::decode(const string& s) {
+UR URDecoder::decode(const string& s) {
     auto [type, components] = parse(s);
 
     if(components.empty()) throw InvalidPathLength();
@@ -21,14 +21,14 @@ UR UrDecoder::decode(const string& s) {
     return decode(type, body);
 }
 
-UrDecoder::UrDecoder() { }
+URDecoder::URDecoder() { }
 
-UR UrDecoder::decode(const std::string& type, const std::string& body) {
+UR URDecoder::decode(const std::string& type, const std::string& body) {
     auto cbor = Bytewords::decode(Bytewords::style::minimal, body);
     return UR(type, cbor);
 }
 
-pair<string, StringVector> UrDecoder::parse(const string& s) {
+pair<string, StringVector> URDecoder::parse(const string& s) {
     // Don't consider case
     auto lowered = to_lowercase(s);
 
@@ -50,7 +50,7 @@ pair<string, StringVector> UrDecoder::parse(const string& s) {
     return pair(type, comps);
 }
 
-pair<uint32_t, size_t> UrDecoder::parse_sequence_component(const string& s) {
+pair<uint32_t, size_t> URDecoder::parse_sequence_component(const string& s) {
     try {
         auto comps = split(s, '-');
         if(comps.size() != 2) throw InvalidSequenceComponent();
@@ -63,7 +63,7 @@ pair<uint32_t, size_t> UrDecoder::parse_sequence_component(const string& s) {
     }
 }
 
-bool UrDecoder::validate_part(const std::string& type) {
+bool URDecoder::validate_part(const std::string& type) {
     if(!expected_type_.has_value()) {
         if(!is_ur_type(type)) return false;
         expected_type_ = type;
@@ -73,7 +73,7 @@ bool UrDecoder::validate_part(const std::string& type) {
     }
 }
 
-bool UrDecoder::receive_part(const std::string& s) {
+bool URDecoder::receive_part(const std::string& s) {
     try {
         // Don't process the part if we're already done
         if(result_.has_value()) return false;

@@ -18,7 +18,7 @@
 
 namespace ur {
 
-class UrDecoder final {
+class URDecoder final {
 public:
     typedef std::optional<std::variant<UR, std::exception> > Result;
 
@@ -32,7 +32,7 @@ public:
     static UR decode(const std::string& string);
 
     // Start decoding a (possibly) multi-part UR.
-    UrDecoder();
+    URDecoder();
 
     const std::optional<std::string>& expected_type() const { return expected_type_; }
     size_t expected_part_count() const { return fountain_decoder.expected_part_count(); }

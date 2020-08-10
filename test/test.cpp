@@ -363,16 +363,16 @@ static void test_fountain_cbor() {
 
 static void test_single_part_ur() {
     auto ur = make_message_ur(50);
-    auto encoded = UrEncoder::encode(ur);
+    auto encoded = UREncoder::encode(ur);
     string expected = "ur:bytes/hdeymejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtgwdpfnsboxgwlbaawzuefywkdplrsrjynbvygabwjldapfcsdwkbrkch";
     assert(encoded == expected);
-    auto decoded = UrDecoder::decode(encoded);
+    auto decoded = URDecoder::decode(encoded);
     assert(ur == decoded);
 }
 
 static void test_ur_encoder() {
     auto ur = make_message_ur(256);
-    auto encoder = UrEncoder(ur, 30);
+    auto encoder = UREncoder(ur, 30);
     StringVector parts;
     for(int i = 0; i < 20; i++) {
         parts.push_back(encoder.next_part());
@@ -406,8 +406,8 @@ static void test_multipart_ur() {
     auto ur = make_message_ur(32767);
     size_t max_fragment_len = 1000;
     uint32_t first_seq_num = 100;
-    auto encoder = UrEncoder(ur, max_fragment_len, first_seq_num);
-    auto decoder = UrDecoder();
+    auto encoder = UREncoder(ur, max_fragment_len, first_seq_num);
+    auto decoder = URDecoder();
     do {
         auto part = encoder.next_part();
         decoder.receive_part(part);
