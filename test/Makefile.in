@@ -33,6 +33,11 @@ CXXFLAGS += -std=c++17 -stdlib=libc++ --debug -O0
 
 LDFLAGS += -lstdc++
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+    LDLIBS +=  -lm -lc++ -lc++abi -lgcc_s -lgcc
+endif
+
 .PHONY: all
 all: test
 
