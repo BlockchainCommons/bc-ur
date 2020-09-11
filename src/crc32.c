@@ -10,6 +10,8 @@
 
 #ifdef ARDUINO
 #define htonl(x) __builtin_bswap32((uint32_t) (x))
+#elif _WIN32
+#include <winsock2.h>
 #else
 #include <arpa/inet.h>
 #endif
