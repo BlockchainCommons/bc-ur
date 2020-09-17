@@ -10,13 +10,38 @@ There also another reference implementation in Swift: [URKit](https://github.com
 
 ## Installation
 
+This sequence also runs the module's unit tests.
+
+### MacOS
+
 ```bash
 $ ./configure
 $ make check
 $ sudo make install
 ```
 
-This sequence runs the module's unit tests.
+### Linux
+
+Make sure you have llvm/clang, libc++ and libc++abi installed. All of them with
+a minimum recommended version 10.
+
+#### Ubuntu and Debian
+
+```bash
+$ sudo apt-get install make
+
+$ wget https://apt.llvm.org/llvm.sh
+$ chmod +x llvm.sh
+$ sudo ./llvm.sh 10  # version 10
+
+$ sudo apt-get install libc++-10-dev libc++abi-10-dev
+```
+
+```bash
+$ export CC="clang-10" && export CXX="clang++-10" && ./configure
+$ make check
+$ sudo make install
+```
 
 ## Use
 

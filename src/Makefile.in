@@ -82,8 +82,8 @@ HEADERS = \
 	ur-encoder.hpp \
 	ur-decoder.hpp
 
-libdir = $(DESTDIR)/$(prefix)/lib
-includedir = $(DESTDIR)/$(prefix)/include/$(package)
+libdir = $(DESTDIR)$(prefix)/lib
+includedir = $(DESTDIR)$(prefix)/include/$(package)
 
 .PHONY: install
 install: $(libname)
