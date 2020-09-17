@@ -38,6 +38,8 @@ ifeq ($(UNAME), Linux)
 else ifeq ($(findstring MINGW64, $(UNAME)), MINGW64)
     # on windows building with msys2/mingw64
     LDLIBS +=  -lm -lc++ -lws2_32
+else
+    LDLIBS += -lstdc++
 endif
 
 .PHONY: all
