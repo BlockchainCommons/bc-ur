@@ -141,6 +141,10 @@ You can import a key by running the following command with that individual’s f
 
 ## Version History
 
+### 0.2.0, 19/04/2020
+
+* Fixed [ByteWords wordlist alphabetization error](https://github.com/BlockchainCommons/Research/issues/45).
+
 ### 0.1.0, 08/09/2020
 
 * Initial testing release.
