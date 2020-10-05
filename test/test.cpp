@@ -30,13 +30,13 @@ static void test_crc32() {
 
 static void test_bytewords_1() {
     ByteVector input = {0, 1, 2, 128, 255};
-    assert(Bytewords::encode(Bytewords::style::standard, input) == "able acid also lava zero jade need echo taxi");
-    assert(Bytewords::encode(Bytewords::style::uri, input) == "able-acid-also-lava-zero-jade-need-echo-taxi");
-    assert(Bytewords::encode(Bytewords::style::minimal, input) == "aeadaolazojendeoti");
+    assert(Bytewords::encode(Bytewords::style::standard, input) == "able acid also lava zoom jade need echo taxi");
+    assert(Bytewords::encode(Bytewords::style::uri, input) == "able-acid-also-lava-zoom-jade-need-echo-taxi");
+    assert(Bytewords::encode(Bytewords::style::minimal, input) == "aeadaolazmjendeoti");
 
-    assert(Bytewords::decode(Bytewords::style::standard, "able acid also lava zero jade need echo taxi") == input);
-    assert(Bytewords::decode(Bytewords::style::uri, "able-acid-also-lava-zero-jade-need-echo-taxi") == input);
-    assert(Bytewords::decode(Bytewords::style::minimal, "aeadaolazojendeoti") == input);
+    assert(Bytewords::decode(Bytewords::style::standard, "able acid also lava zoom jade need echo taxi") == input);
+    assert(Bytewords::decode(Bytewords::style::uri, "able-acid-also-lava-zoom-jade-need-echo-taxi") == input);
+    assert(Bytewords::decode(Bytewords::style::minimal, "aeadaolazmjendeoti") == input);
 
     // bad checksum
     assert_throws(Bytewords::decode(Bytewords::style::standard, "able acid also lava zero jade need echo wolf"));
@@ -64,23 +64,23 @@ static void test_bytewords_2() {
 
     string encoded =
         "yank toys bulb skew when warm free fair tent swan "
-        "open brag mint noon jury lion view tiny brew note "
-        "body data webs what zone bald join runs data whiz "
-        "days keys user diet news ruby whiz zoom menu surf "
+        "open brag mint noon jury list view tiny brew note "
+        "body data webs what zinc bald join runs data whiz "
+        "days keys user diet news ruby whiz zone menu surf "
         "flew omit trip pose runs fund part even crux fern "
         "math visa tied loud redo silk curl jugs hard beta "
         "next cost puma drum acid junk swan free very mint "
-        "flap warm fact math flap what list free jugs yell "
+        "flap warm fact math flap what limp free jugs yell "
         "fish epic whiz open numb math city belt glow wave "
-        "list fuel grim free zoom open love diet gyro cats "
+        "limp fuel grim free zone open love diet gyro cats "
         "fizz holy city puff";
 
     string encoded_minimal =
-        "yktsbbswwnwmfefrttsnonbgmtnnjylnvwtybwne"
-        "bydawswtzebdjnrsdawzdsksurdtnsrywzzmmusf"
+        "yktsbbswwnwmfefrttsnonbgmtnnjyltvwtybwne"
+        "bydawswtzcbdjnrsdawzdsksurdtnsrywzzemusf"
         "fwottppersfdptencxfnmhvatdldroskcljshdba"
-        "ntctpadmadjksnfevymtfpwmftmhfpwtltfejsyl"
-        "fhecwzonnbmhcybtgwweltflgmfezmonledtgocs"
+        "ntctpadmadjksnfevymtfpwmftmhfpwtlpfejsyl"
+        "fhecwzonnbmhcybtgwwelpflgmfezeonledtgocs"
         "fzhycypf";
 
     assert(Bytewords::encode(Bytewords::style::standard, input) == encoded);
@@ -378,26 +378,26 @@ static void test_ur_encoder() {
         parts.push_back(encoder.next_part());
     }
     StringVector expected_parts = {
-        "ur:bytes/1-9/ltadascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtdkgsltgh",
-        "ur:bytes/2-9/ltaoascfadaxcywenbpljkhdcagwdpfnsboxgwlbaawzuefywkdplrsrjynbvygabwjldapfcsgmghhkhstlrdcxaefz",
-        "ur:bytes/3-9/ltaxascfadaxcywenbpljkhdcahelbknlkuejnbadmssfhfrdpsbiegecpasvssovlgeykssjykklronvsjksopdzool",
-        "ur:bytes/4-9/ltaaascfadaxcywenbpljkhdcasotkhemthydawydtaxneurlkosgwcekonertkbrlwmplssjtammdplolsbrdzertas",
-        "ur:bytes/5-9/ltahascfadaxcywenbpljkhdcatbbdfmssrkzocwnezmlennjpfzbgmuktrhtejscktelgfpdlrkfyfwdajldejokbwf",
-        "ur:bytes/6-9/ltamascfadaxcywenbpljkhdcackjlhkhybssklbwefectpfnbbectrljectpavyrolkzezepkmwidmwoxkilghdsowp",
-        "ur:bytes/7-9/ltatascfadaxcywenbpljkhdcavszownjkwtclrtvaynhpahrtoxmwvwatmedibkaegdosftvandiodagdhthtrlnnhy",
-        "ur:bytes/8-9/ltayascfadaxcywenbpljkhdcadmsponkkbbhgsolnjntegepmttmoonftnbuoiyrehfrtsabzsttorodklubbuyaetk",
-        "ur:bytes/9-9/ltasascfadaxcywenbpljkhdcajskecpmdckihdyhphfotjojtfmlpwmadspaxrkytbztpbauotbgtgtaeaevtgavtny",
-        "ur:bytes/10-9/ltbkascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtwdkiplzs",
-        "ur:bytes/11-9/ltbdascfadaxcywenbpljkhdcahelbknlkuejnbadmssfhfrdpsbiegecpasvssovlgeykssjykklronvsjkvetiiapk",
-        "ur:bytes/12-9/ltbnascfadaxcywenbpljkhdcarllaluzodmgstospeyiefmwejlwtpedamktksrvlcygmzmmovovllarodtmtbnptrs",
-        "ur:bytes/13-9/ltbtascfadaxcywenbpljkhdcamtkgtpknghchchyketwsvwgwfdhpgmgtylctotztpdrpayoschcmhplffziachrfgd",
-        "ur:bytes/14-9/ltbaascfadaxcywenbpljkhdcapazmwnvonnvdnsbyleynwtnsjkjndeoldydkbkdslgjkbbkortbelomueekgvstegt",
-        "ur:bytes/15-9/ltbsascfadaxcywenbpljkhdcaynmhpddpzoversbdqdfyrehnqzlugmjzmnmtwmrouohtstgsbsahpawkditkckynwt",
-        "ur:bytes/16-9/ltbeascfadaxcywenbpljkhdcawygekobamwtlihsnpalpsghenskkiynthdzttsimtojetprsttmukirlrsbtamjtpd",
-        "ur:bytes/17-9/ltbyascfadaxcywenbpljkhdcamklgftaxykpewyrtqzhydntpnytyisincxmhtbceaykolduortotiaiaiafhiaoyce",
-        "ur:bytes/18-9/ltbgascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtntwkbkwy",
-        "ur:bytes/19-9/ltbwascfadaxcywenbpljkhdcadekicpaajootjzpsdrbalteywllbdsnbinaerkurspbncxgslgftvtsrjtksplcpeo",
-        "ur:bytes/20-9/ltbbascfadaxcywenbpljkhdcayapmrleeleaxpasfrtrdkncffwjyjzgyetdmlewtkpktgllepfrltatazcksmhkbot"
+        "ur:bytes/1-9/lpadascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtdkgslpgh",
+        "ur:bytes/2-9/lpaoascfadaxcywenbpljkhdcagwdpfnsboxgwlbaawzuefywkdplrsrjynbvygabwjldapfcsgmghhkhstlrdcxaefz",
+        "ur:bytes/3-9/lpaxascfadaxcywenbpljkhdcahelbknlkuejnbadmssfhfrdpsbiegecpasvssovlgeykssjykklronvsjksopdzmol",
+        "ur:bytes/4-9/lpaaascfadaxcywenbpljkhdcasotkhemthydawydtaxneurlkosgwcekonertkbrlwmplssjtammdplolsbrdzcrtas",
+        "ur:bytes/5-9/lpahascfadaxcywenbpljkhdcatbbdfmssrkzmcwnezelennjpfzbgmuktrhtejscktelgfpdlrkfyfwdajldejokbwf",
+        "ur:bytes/6-9/lpamascfadaxcywenbpljkhdcackjlhkhybssklbwefectpfnbbectrljectpavyrolkzczcpkmwidmwoxkilghdsowp",
+        "ur:bytes/7-9/lpatascfadaxcywenbpljkhdcavszmwnjkwtclrtvaynhpahrtoxmwvwatmedibkaegdosftvandiodagdhthtrlnnhy",
+        "ur:bytes/8-9/lpayascfadaxcywenbpljkhdcadmsponkkbbhgsoltjntegepmttmoonftnbuoiyrehfrtsabzsttorodklubbuyaetk",
+        "ur:bytes/9-9/lpasascfadaxcywenbpljkhdcajskecpmdckihdyhphfotjojtfmlnwmadspaxrkytbztpbauotbgtgtaeaevtgavtny",
+        "ur:bytes/10-9/lpbkascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtwdkiplzs",
+        "ur:bytes/11-9/lpbdascfadaxcywenbpljkhdcahelbknlkuejnbadmssfhfrdpsbiegecpasvssovlgeykssjykklronvsjkvetiiapk",
+        "ur:bytes/12-9/lpbnascfadaxcywenbpljkhdcarllaluzmdmgstospeyiefmwejlwtpedamktksrvlcygmzemovovllarodtmtbnptrs",
+        "ur:bytes/13-9/lpbtascfadaxcywenbpljkhdcamtkgtpknghchchyketwsvwgwfdhpgmgtylctotzopdrpayoschcmhplffziachrfgd",
+        "ur:bytes/14-9/lpbaascfadaxcywenbpljkhdcapazewnvonnvdnsbyleynwtnsjkjndeoldydkbkdslgjkbbkortbelomueekgvstegt",
+        "ur:bytes/15-9/lpbsascfadaxcywenbpljkhdcaynmhpddpzmversbdqdfyrehnqzlugmjzmnmtwmrouohtstgsbsahpawkditkckynwt",
+        "ur:bytes/16-9/lpbeascfadaxcywenbpljkhdcawygekobamwtlihsnpalnsghenskkiynthdzotsimtojetprsttmukirlrsbtamjtpd",
+        "ur:bytes/17-9/lpbyascfadaxcywenbpljkhdcamklgftaxykpewyrtqzhydntpnytyisincxmhtbceaykolduortotiaiaiafhiaoyce",
+        "ur:bytes/18-9/lpbgascfadaxcywenbpljkhdcahkadaemejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtntwkbkwy",
+        "ur:bytes/19-9/lpbwascfadaxcywenbpljkhdcadekicpaajootjzpsdrbalpeywllbdsnbinaerkurspbncxgslgftvtsrjtksplcpeo",
+        "ur:bytes/20-9/lpbbascfadaxcywenbpljkhdcayapmrleeleaxpasfrtrdkncffwjyjzgyetdmlewtkpktgllepfrltataztksmhkbot"
     };
     assert(parts == expected_parts);
 }
