@@ -30,14 +30,14 @@ ByteVector sha256(const ByteVector &buf) {
 }
 
 ByteVector crc32_bytes(const ByteVector &buf) {
-    uint32_t checksum = crc32n(&buf[0], buf.size());
+    uint32_t checksum = ur_crc32n(&buf[0], buf.size());
     auto cbegin = (uint8_t*)&checksum;
     auto cend = cbegin + sizeof(uint32_t);
     return ByteVector(cbegin, cend);
 }
 
 uint32_t crc32_int(const ByteVector &buf) {
-    return crc32(&buf[0], buf.size());
+    return ur_crc32(&buf[0], buf.size());
 }
 
 ByteVector string_to_bytes(const string& s) {

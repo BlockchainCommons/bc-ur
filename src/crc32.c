@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 #endif
 
-uint32_t crc32(const uint8_t* bytes, size_t len) {
+uint32_t ur_crc32(const uint8_t* bytes, size_t len) {
     static uint32_t* table = NULL;
 
     if(table == NULL) {
@@ -38,6 +38,6 @@ uint32_t crc32(const uint8_t* bytes, size_t len) {
     return ~crc;
 }
 
-uint32_t crc32n(const uint8_t* bytes, size_t len) {
-    return htonl(crc32(bytes, len));
+uint32_t ur_crc32n(const uint8_t* bytes, size_t len) {
+    return htonl(ur_crc32(bytes, len));
 }

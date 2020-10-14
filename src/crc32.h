@@ -16,10 +16,10 @@ extern "C" {
 #endif
 
 // Returns the CRC-32 checksum of the input buffer.
-uint32_t crc32(const uint8_t* bytes, size_t len);
+uint32_t ur_crc32(const uint8_t* bytes, size_t len);
 
 // Returns the CRC-32 checksum of the input buffer in network byte order (big endian).
-uint32_t crc32n(const uint8_t* bytes, size_t len);
+uint32_t ur_crc32n(const uint8_t* bytes, size_t len);
 
 #ifdef __cplusplus
 }
