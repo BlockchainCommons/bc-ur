@@ -8,6 +8,7 @@
 #include "bytewords.hpp"
 #include "utils.hpp"
 #include <stdexcept>
+#include <algorithm>
 
 namespace ur {
 
@@ -117,16 +118,14 @@ static const string encode_minimal(const ByteVector& buf) {
 }
 
 static const ByteVector _decode(const string& s, char separator, size_t word_len) {
-    ByteVector buf;
     StringVector words;
     if(word_len == 4) {
         words = split(s, separator);
     } else {
         words = partition(s, 2);
     }
-    for(auto word: words) {
-        buf.push_back(decode_word(word, word_len));
-    }
+    ByteVector buf;
+    transform(words.begin(), words.end(), back_inserter(buf), [&](auto word) { return decode_word(word, word_len); });
     if(buf.size() < 5) {
         throw runtime_error("Invalid Bytewords.");
     }

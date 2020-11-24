@@ -33,7 +33,7 @@ size_t FountainEncoder::find_nominal_fragment_length(size_t message_len, size_t 
     return *fragment_len;
 }
 
-vector<ByteVector> FountainEncoder::partition_message(ByteVector message, size_t fragment_len) {
+vector<ByteVector> FountainEncoder::partition_message(const ByteVector &message, size_t fragment_len) {
     auto remaining = message;
     vector<ByteVector> fragments;
     while(!remaining.empty()) {

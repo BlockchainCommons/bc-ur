@@ -17,12 +17,12 @@ namespace ur {
 
 class Xoshiro256 {
 public:
-    Xoshiro256(const std::array<uint64_t, 4>& a);
-    Xoshiro256(const std::array<uint8_t, 32>& a);
+    explicit Xoshiro256(const std::array<uint64_t, 4>& a);
+    explicit Xoshiro256(const std::array<uint8_t, 32>& a);
 
-    Xoshiro256(const ByteVector& bytes);
-    Xoshiro256(const std::string& s);
-    Xoshiro256(uint32_t crc32);
+    explicit Xoshiro256(const ByteVector& bytes);
+    explicit Xoshiro256(const std::string& s);
+    explicit Xoshiro256(uint32_t crc32);
 
     uint64_t next();
     double next_double();

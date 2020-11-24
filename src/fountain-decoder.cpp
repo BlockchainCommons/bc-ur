@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <numeric>
 
 using namespace std;
 
@@ -18,18 +19,19 @@ namespace ur {
 
 FountainDecoder::FountainDecoder() { }
 
-FountainDecoder::Part::Part(FountainEncoder::Part& p) {
-   indexes_ = choose_fragments(p.seq_num(), p.seq_len(), p.checksum());
-   data_ = p.data();
-}
-
-FountainDecoder::Part::Part(PartIndexes& indexes, ByteVector& data)
-    : indexes_(indexes),
-    data_(data)
+FountainDecoder::Part::Part(const FountainEncoder::Part& p)
+    : indexes_(choose_fragments(p.seq_num(), p.seq_len(), p.checksum()))
+    , data_(p.data())
 {
 }
 
-const ByteVector FountainDecoder::join_fragments(const std::vector<ByteVector>& fragments, size_t message_len) {
+FountainDecoder::Part::Part(PartIndexes& indexes, ByteVector& data)
+    : indexes_(indexes)
+    , data_(data)
+{
+}
+
+const ByteVector FountainDecoder::join_fragments(const vector<ByteVector>& fragments, size_t message_len) {
     auto message = join(fragments);
     return take_first(message, message_len);
 }
@@ -38,7 +40,7 @@ double FountainDecoder::estimated_percent_complete() const {
     if(is_complete()) return 1;
     if(!_expected_part_indexes.has_value()) return 0;
     auto estimated_input_parts = expected_part_count() * 1.75;
-    return std::min(0.99, processed_parts_count_ / estimated_input_parts);
+    return min(0.99, processed_parts_count_ / estimated_input_parts);
 }
 
 bool FountainDecoder::receive_part(FountainEncoder::Part& encoder_part) {
@@ -86,7 +88,7 @@ void FountainDecoder::process_queue_item() {
     //print_state();
 }
 
-void FountainDecoder::reduce_mixed_by(Part& p) {
+void FountainDecoder::reduce_mixed_by(const Part& p) {
     // Reduce all the current mixed parts by the given part
     vector<Part> reduced_parts;
     for(auto i = _mixed_parts.begin(); i != _mixed_parts.end(); i++) {
@@ -108,7 +110,7 @@ void FountainDecoder::reduce_mixed_by(Part& p) {
     _mixed_parts = new_mixed;
 }
 
-FountainDecoder::Part FountainDecoder::reduce_part_by_part(Part& a, Part& b) const {
+FountainDecoder::Part FountainDecoder::reduce_part_by_part(const Part& a, const Part& b) const {
     // If the fragments mixed into `b` are a strict (proper) subset of those in `a`...
     if(is_strict_subset(b.indexes(), a.indexes())) {
         // The new fragments in the revised part are `a` - `b`.
@@ -135,18 +137,14 @@ void FountainDecoder::process_simple_part(Part& p) {
     if(received_part_indexes_ == _expected_part_indexes) {
         // Reassemble the message from its fragments
         vector<Part> sorted_parts;
-        for(auto elem: _simple_parts) {
-            sorted_parts.push_back(elem.second);
-        }
+        transform(_simple_parts.begin(), _simple_parts.end(), back_inserter(sorted_parts), [&](auto elem) { return elem.second; });
         sort(sorted_parts.begin(), sorted_parts.end(),
             [](const Part& a, const Part& b) -> bool {
                 return a.index() < b.index();
             }
         );
         vector<ByteVector> fragments;
-        for(auto part: sorted_parts) {
-            fragments.push_back(part.data());
-        }
+        transform(sorted_parts.begin(), sorted_parts.end(), back_inserter(fragments), [&](auto part) { return part.data(); });
         auto message = join_fragments(fragments, *_expected_message_len);
 
         // Verify the message checksum and note success or failure
@@ -162,20 +160,15 @@ void FountainDecoder::process_simple_part(Part& p) {
     }
 }
 
-void FountainDecoder::process_mixed_part(Part& p) {
+void FountainDecoder::process_mixed_part(const Part& p) {
     // Don't process duplicate parts
-    for(auto r: _mixed_parts) {
-        if(r.first == p.indexes()) { return; }
+    if(any_of(_mixed_parts.begin(), _mixed_parts.end(), [&](auto r) { return r.first == p.indexes(); })) {
+        return;
     }
 
     // Reduce this part by all the others
-    Part p2 = p;
-    for(auto r: _simple_parts) {
-        p2 = reduce_part_by_part(p2, r.second);
-    }
-    for(auto r: _mixed_parts) {
-        p2 = reduce_part_by_part(p2, r.second);
-    }
+    auto p2 = accumulate(_simple_parts.begin(), _simple_parts.end(), p, [&](auto p, auto r) { return reduce_part_by_part(p, r.second); });
+    p2 = accumulate(_mixed_parts.begin(), _mixed_parts.end(), p2, [&](auto p, auto r) { return reduce_part_by_part(p, r.second); });
 
     // If the part is now simple
     if(p2.is_simple()) {
@@ -189,7 +182,7 @@ void FountainDecoder::process_mixed_part(Part& p) {
     }
 }
 
-bool FountainDecoder::validate_part(FountainEncoder::Part& p) {
+bool FountainDecoder::validate_part(const FountainEncoder::Part& p) {
     // If this is the first part we've seen
     if(!_expected_part_indexes.has_value()) {
         // Record the things that all the other parts we see will have to match to be valid.
@@ -227,7 +220,7 @@ void FountainDecoder::print_part_end() const {
     cout << "processed: " << processed_parts_count_ << ", expected: " << expected << ", received: " << received_part_indexes_.size() << ", percent: " << percent << "%" << endl;
 }
 
-std::string FountainDecoder::result_description() const {
+string FountainDecoder::result_description() const {
     string desc;
     if(!result_.has_value()) {
         desc = "nil";

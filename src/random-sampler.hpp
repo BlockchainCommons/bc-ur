@@ -24,7 +24,7 @@ namespace ur {
 
 class RandomSampler final {
 public:
-    RandomSampler(std::vector<double> probs);
+    explicit RandomSampler(std::vector<double> probs);
 
     int next(std::function<double()> rng);
 

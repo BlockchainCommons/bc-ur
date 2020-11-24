@@ -51,7 +51,7 @@ private:
         ByteVector data_;
 
     public:
-        Part(FountainEncoder::Part& p);
+        explicit Part(const FountainEncoder::Part& p);
         Part(PartIndexes& indexes, ByteVector& data);
 
         const PartIndexes& indexes() const { return indexes_; }
@@ -80,17 +80,21 @@ private:
     void enqueue(const Part &p);
     void enqueue(Part &&p);
     void process_queue_item();
-    void reduce_mixed_by(Part& p);
-    Part reduce_part_by_part(Part& a, Part& b) const;
+    void reduce_mixed_by(const Part& p);
+    Part reduce_part_by_part(const Part& a, const Part& b) const;
     void process_simple_part(Part& p);
-    void process_mixed_part(Part& p);
-    bool validate_part(FountainEncoder::Part& p);
+    void process_mixed_part(const Part& p);
+    bool validate_part(const FountainEncoder::Part& p);
 
     // debugging
     static std::string indexes_to_string(const PartIndexes& indexes);
     std::string result_description() const;
+
+    // cppcheck-suppress unusedPrivateFunction
     void print_part(const Part& p) const;
+    // cppcheck-suppress unusedPrivateFunction
     void print_part_end() const;
+    // cppcheck-suppress unusedPrivateFunction
     void print_state() const;
 };
 

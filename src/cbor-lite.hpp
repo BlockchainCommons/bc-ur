@@ -21,11 +21,11 @@ public:
     }
     virtual ~Exception() noexcept = default;
 
-    Exception(const char* d) noexcept {
+    explicit Exception(const char* d) noexcept {
         what_ += std::string(": ") + d;
     }
 
-    Exception(const std::string& d) noexcept {
+    explicit Exception(const std::string& d) noexcept {
         what_ += ": " + d;
     }
 

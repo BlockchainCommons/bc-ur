@@ -28,7 +28,7 @@ public:
         Part(uint32_t seq_num, size_t seq_len, size_t message_len, uint32_t checksum, const ByteVector& data) 
             : seq_num_(seq_num), seq_len_(seq_len), message_len_(message_len), checksum_(checksum), data_(data)
         { }
-        Part(const ByteVector& cbor);
+        explicit Part(const ByteVector& cbor);
 
         uint32_t seq_num() const { return seq_num_; }
         size_t seq_len() const { return seq_len_; }
@@ -50,7 +50,7 @@ public:
     FountainEncoder(const ByteVector& message, size_t max_fragment_len, uint32_t first_seq_num = 0, size_t min_fragment_len = 10);
     
     static size_t find_nominal_fragment_length(size_t message_len, size_t min_fragment_len, size_t max_fragment_len);
-    static std::vector<ByteVector> partition_message(ByteVector message, size_t fragment_len);
+    static std::vector<ByteVector> partition_message(const ByteVector &message, size_t fragment_len);
 
     uint32_t seq_num() const { return seq_num_; }
     const PartIndexes& last_part_indexes() const { return last_part_indexes_; }

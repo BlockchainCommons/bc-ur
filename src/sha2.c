@@ -296,7 +296,7 @@ void sha256_Init(SHA256_CTX* context) {
 	j++
 
 void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2_word32* state_out) {
-	sha2_word32	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, s0 = 0, s1 = 0;
+	sha2_word32	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	sha2_word32	T1 = 0;
 	sha2_word32 W256[16] = {0};
 	int		j = 0;
@@ -347,13 +347,14 @@ void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2
 	state_out[7] = state_in[7] + h;
 
 	/* Clean up */
+	// cppcheck-suppress unreadVariable
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
 #else /* SHA2_UNROLL_TRANSFORM */
 
 void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2_word32* state_out) {
-	sha2_word32	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, s0 = 0, s1 = 0;
+	sha2_word32	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	sha2_word32	T1 = 0, T2 = 0 , W256[16] = {0};
 	int		j = 0;
 
@@ -386,6 +387,7 @@ void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2
 
 	do {
 		/* Part of the message block expansion: */
+		sha2_word32 s0 = 0, s1 = 0;
 		s0 = W256[(j+1)&0x0f];
 		s0 = sigma0_256(s0);
 		s1 = W256[(j+14)&0x0f];
@@ -418,6 +420,7 @@ void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2
 	state_out[7] = state_in[7] + h;
 
 	/* Clean up */
+	// cppcheck-suppress unreadVariable
 	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
@@ -454,6 +457,7 @@ void sha256_Update(SHA256_CTX* context, const sha2_byte *data, size_t len) {
 			MEMCPY_BCOPY(((uint8_t*)context->buffer) + usedspace, data, len);
 			context->bitcount += len << 3;
 			/* Clean up: */
+			// cppcheck-suppress unreadVariable
 			usedspace = freespace = 0;
 			return;
 		}
@@ -478,6 +482,7 @@ void sha256_Update(SHA256_CTX* context, const sha2_byte *data, size_t len) {
 		context->bitcount += len << 3;
 	}
 	/* Clean up: */
+	// cppcheck-suppress unreadVariable
 	usedspace = freespace = 0;
 }
 
@@ -532,17 +537,17 @@ void sha256_Final(SHA256_CTX* context, sha2_byte digest[]) {
 
 	/* Clean up state data: */
 	memzero(context, sizeof(SHA256_CTX));
+	// cppcheck-suppress unreadVariable
 	usedspace = 0;
 }
 
 char *sha256_End(SHA256_CTX* context, char buffer[]) {
 	sha2_byte	digest[SHA256_DIGEST_LENGTH] = {0}, *d = digest;
-	int		i = 0;
 
 	if (buffer != (char*)0) {
 		sha256_Final(context, digest);
 
-		for (i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+		for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
 			*buffer++ = sha2_hex_digits[(*d & 0xf0) >> 4];
 			*buffer++ = sha2_hex_digits[*d & 0x0f];
 			d++;
@@ -603,7 +608,7 @@ void sha512_Init(SHA512_CTX* context) {
 	j++
 
 void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2_word64* state_out) {
-	sha2_word64	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, s0 = 0, s1 = 0;
+	sha2_word64	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	sha2_word64	T1 = 0, W512[16] = {0};
 	int		j = 0;
 
@@ -652,13 +657,14 @@ void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2
 	state_out[7] = state_in[7] + h;
 
 	/* Clean up */
+	// cppcheck-suppress unreadVariable
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
 #else /* SHA2_UNROLL_TRANSFORM */
 
 void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2_word64* state_out) {
-	sha2_word64	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, s0 = 0, s1 = 0;
+	sha2_word64	a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	sha2_word64	T1 = 0, T2 = 0, W512[16] = {0};
 	int		j = 0;
 
@@ -691,6 +697,7 @@ void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2
 
 	do {
 		/* Part of the message block expansion: */
+		sha2_word64 s0 = 0, s1 = 0;
 		s0 = W512[(j+1)&0x0f];
 		s0 = sigma0_512(s0);
 		s1 = W512[(j+14)&0x0f];
@@ -723,6 +730,7 @@ void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2
 	state_out[7] = state_in[7] + h;
 
 	/* Clean up */
+	// cppcheck-suppress unreadVariable
 	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
@@ -759,6 +767,7 @@ void sha512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len) {
 			MEMCPY_BCOPY(((uint8_t*)context->buffer) + usedspace, data, len);
 			ADDINC128(context->bitcount, len << 3);
 			/* Clean up: */
+			// cppcheck-suppress unreadVariable
 			usedspace = freespace = 0;
 			return;
 		}
@@ -783,6 +792,7 @@ void sha512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len) {
 		ADDINC128(context->bitcount, len << 3);
 	}
 	/* Clean up: */
+	// cppcheck-suppress unreadVariable
 	usedspace = freespace = 0;
 }
 
@@ -846,12 +856,11 @@ void sha512_Final(SHA512_CTX* context, sha2_byte digest[]) {
 
 char *sha512_End(SHA512_CTX* context, char buffer[]) {
 	sha2_byte	digest[SHA512_DIGEST_LENGTH] = {0}, *d = digest;
-	int		i = 0;
 
 	if (buffer != (char*)0) {
 		sha512_Final(context, digest);
 
-		for (i = 0; i < SHA512_DIGEST_LENGTH; i++) {
+		for (int i = 0; i < SHA512_DIGEST_LENGTH; i++) {
 			*buffer++ = sha2_hex_digits[(*d & 0xf0) >> 4];
 			*buffer++ = sha2_hex_digits[*d & 0x0f];
 			d++;

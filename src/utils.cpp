@@ -155,10 +155,7 @@ bool is_ur_type(char c) {
 }
 
 bool is_ur_type(const string& s) {
-    for(char c: s) {
-        if(!is_ur_type(c)) { return false; }
-    }
-    return true;
+    return none_of(s.begin(), s.end(), [](auto c) { return !is_ur_type(c); });
 }
 
 string to_lowercase(const string& s) {
