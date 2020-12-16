@@ -1,6 +1,8 @@
 # [Blockchain Commons UR Library](https://github.com/BlockchainCommons/bc-ur)
 
-### _by Wolf McNally and Christopher Allen_
+### _by [Wolf McNally](https://www.github.com/wolfmcnally) and [Christopher Allen](https://www.github.com/ChristopherA)_
+
+* <img src="https://github.com/BlockchainCommons/crypto-commons/blob/master/images/logos/crypto-commons-super-simple.png" width=16 valign="bottom">&nbsp;&nbsp; ***part of the [crypto commons](https://github.com/BlockchainCommons/crypto-commons/blob/master/README.md) technology family***
 
 The **Blockchain Commons UR Library** is a UR Reference Implementation in C++.
 
