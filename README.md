@@ -144,6 +144,10 @@ You can import a key by running the following command with that individual’s f
 
 ## Version History
 
+### 0.3.0, 19/01/2020
+
+* Added support for floating point encoding and decoding to embedded CBORLite.
+
 ### 0.2.0, 19/04/2020
 
 * Fixed [ByteWords wordlist alphabetization error](https://github.com/BlockchainCommons/Research/issues/45).
