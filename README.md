@@ -1,6 +1,10 @@
 # [Blockchain Commons UR Library](https://github.com/BlockchainCommons/bc-ur)
 
-**UR Reference Implementation in C++**
+### _by [Wolf McNally](https://www.github.com/wolfmcnally) and [Christopher Allen](https://www.github.com/ChristopherA)_
+
+* <img src="https://github.com/BlockchainCommons/crypto-commons/blob/master/images/logos/crypto-commons-super-simple.png" width=16 valign="bottom">&nbsp;&nbsp; ***part of the [crypto commons](https://github.com/BlockchainCommons/crypto-commons/blob/master/README.md) technology family***
+
+The **Blockchain Commons UR Library** is a UR Reference Implementation in C++.
 
 ## Introduction
 
@@ -8,7 +12,7 @@ URs ("Uniform Resources") are a method for encoding structured binary data for t
 
 There also another reference implementation in Swift: [URKit](https://github.com/blockchaincommons/URKit), and a demo app that uses it to display and read multi-part animated QR codes: [URDemo](https://github.com/blockchaincommons/URDemo).
 
-## Installation
+## Installation instructions
 
 This sequence also runs the module's unit tests.
 
@@ -43,7 +47,7 @@ $ make check
 $ sudo make install
 ```
 
-## Use
+## Usage Instructions
 
 1. Link against `libbc-ur.a`.
 2. Include the umbrella header in your code:
@@ -68,6 +72,10 @@ $ make distclean
 `make lint` uses [Cppcheck](https://en.wikipedia.org/wiki/Cppcheck) to perform static analysis on the code. All PRs should pass with no warnings.
 
 `make distcheck` builds a distribution tarball, unpacks it, then configures, builds, and runs unit tests from it, then performs an install and uninstall from a non-system directory and makes sure the uninstall leaves it clean. `make distclean` removes all known byproduct files, and unless you've added files of your own, should leave the directory in a state that could be tarballed for distribution. After a `make distclean` you'll have to run `./configure` again.
+
+## Status - Late Alpha
+
+**Blockchain Commons UR Library** is currently under active development and in the late alpha testing phase. It should not be used for production tasks until it has had further testing and auditing.
 
 ## Origin, Authors, Copyright & Licenses
 
