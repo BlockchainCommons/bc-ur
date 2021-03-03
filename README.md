@@ -99,6 +99,21 @@ In most cases, the authors, copyright, and license for each file reside in comme
 
 - autotools - Gnu Build System from Free Software Foundation ([intro](https://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)).
 
+## Subsequent Usage
+
+
+These are adaptations, conversions, and wrappers that make `bc-ur` available for other languages:
+
+* [foundation-ur-py](https://github.com/Foundation-Devices/foundation-ur-py) Python implementation by [Foundation Devices](https://foundationdevices.com/)
+
+* [Hummingbird](https://github.com/sparrowwallet/hummingbird) - Java implementation by [Sparrow Wallet](https://sparrowwallet.com/)
+
+* [URKit](https://github.com/BlockchainCommons/URKit) - Swift implementation by [Blockchain Commons](https://www.blockchaincommons.com/)
+
+* [bc-ur-java](https://github.com/BlockchainCommons/bc-ur-java) - Java wrapper by [Blockchain Commons](https://www.blockchaincommons.com/)
+
+* [ur-rs](https://github.com/dspicher/ur-rs) - Rust implementation by [Dominik Spicher](https://github.com/dspicher)
+
 ## Financial Support
 
 *Blockchain Commons Crypto Base* is a project of [Blockchain Commons](https://www.blockchaincommons.com/). We are proudly a "not-for-profit" social benefit corporation committed to open source & open development. Our work is funded entirely by donations and collaborative partnerships with people like you. Every contribution will be spent on building open tools, technologies, and techniques that sustain and advance blockchain and internet security infrastructure and promote an open web.
