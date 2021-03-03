@@ -19,7 +19,7 @@ jobs:
     - run: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add - || exit 1
     - run: sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main" || exit 1
     - run: sudo apt-get update || exit 1
-    - run: sudo apt-get install -y clang-10 libc++-10-dev libc++abi-10-dev cppcheck || exit 1
-    - run: export CC="clang-10" && export CXX="clang++-10" && ./configure && make lint && make check
+    - run: sudo apt-get install -y clang-10 libc++-10-dev libc++abi-10-dev || exit 1
+    - run: export CC="clang-10" && export CXX="clang++-10" && ./configure && make check
     - run: sudo make install
     - run: export CC="clang-10" && export CXX="clang++-10" && make distcheck && make distclean
