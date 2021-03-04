@@ -5,7 +5,9 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - run: brew install cppcheck
     - run: ./configure
+    - run: make lint
     - run: make check
     - run: sudo make install
     - run: make distcheck && make distclean
@@ -21,4 +23,3 @@ jobs:
     - run: export CC="clang-10" && export CXX="clang++-10" && ./configure && make check
     - run: sudo make install
     - run: export CC="clang-10" && export CXX="clang++-10" && make distcheck && make distclean
-

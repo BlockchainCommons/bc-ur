@@ -121,4 +121,4 @@ distclean: clean
 
 .PHONY: lint
 lint:
-	cppcheck --enable=all --inline-suppr --suppress=unusedFunction --suppress=missingInclude .
+	cppcheck --enable=all --inline-suppr --suppress=unusedFunction --error-exitcode=1 --suppress=missingInclude .
