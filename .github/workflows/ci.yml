@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@v2
     - run: brew install cppcheck
     - run: ./configure
-    - run: make lint
+    - run: cppcheck --enable=all --inline-suppr --suppress=unusedFunction --suppress=noValidConfiguration --error-exitcode=1 --suppress=missingInclude .
     - run: make check
     - run: sudo make install
     - run: make distcheck && make distclean
