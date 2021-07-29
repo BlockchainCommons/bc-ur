@@ -29,7 +29,13 @@ RESET=`tput sgr0`
 
 COMPILER = g++
 CFLAGS += --debug -O0
-CXXFLAGS += -std=c++17 -stdlib=libc++ --debug -O0
+
+CC = @CXX@
+ifeq (@CXX@, g++)
+	CXXFLAGS += -std=c++17 --debug -O0
+else
+	CXXFLAGS += -std=c++17 -stdlib=libc++ --debug -O0
+endif
 
 UNAME := $(shell uname)
 
