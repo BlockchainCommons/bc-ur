@@ -52,7 +52,7 @@ private:
 
     public:
         explicit Part(const FountainEncoder::Part& p);
-        Part(PartIndexes& indexes, ByteVector& data);
+        Part(PartIndexes& indexes, const ByteVector& data);
 
         const PartIndexes& indexes() const { return indexes_; }
         const ByteVector& data() const { return data_; }

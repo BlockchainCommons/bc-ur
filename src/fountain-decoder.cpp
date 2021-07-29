@@ -25,7 +25,7 @@ FountainDecoder::Part::Part(const FountainEncoder::Part& p)
 {
 }
 
-FountainDecoder::Part::Part(PartIndexes& indexes, ByteVector& data)
+FountainDecoder::Part::Part(PartIndexes& indexes, const ByteVector& data)
     : indexes_(indexes)
     , data_(data)
 {
