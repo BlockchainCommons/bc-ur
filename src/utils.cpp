@@ -9,7 +9,6 @@
 
 extern "C" {
 
-#include "sha2.h"
 #include "crc32.h"
 
 }
@@ -18,15 +17,28 @@ extern "C" {
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+#include <mbedtls/sha256.h>
+
 
 using namespace std;
 
 namespace ur {
 
+#define SHA256_LEN 32
+
 ByteVector sha256(const ByteVector &buf) {
-    uint8_t digest[SHA256_DIGEST_LENGTH];
-    sha256_Raw(&buf[0], buf.size(), digest);
-    return ByteVector(digest, digest + SHA256_DIGEST_LENGTH);
+    uint8_t digest[SHA256_LEN];
+    mbedtls_sha256_context ctx;
+    mbedtls_sha256_init(&ctx);
+    int ret = mbedtls_sha256_starts_ret(&ctx, 0);
+    assert(!ret);
+    ret = mbedtls_sha256_update_ret(&ctx, &buf[0], buf.size());                         \
+    assert(!ret);
+    ret = mbedtls_sha256_finish_ret(&ctx, digest);
+    assert(!ret);
+    mbedtls_sha256_free(&ctx);
+
+    return ByteVector(digest, digest + SHA256_LEN);
 }
 
 ByteVector crc32_bytes(const ByteVector &buf) {
