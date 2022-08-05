@@ -1,5 +1,5 @@
 idf_component_register(SRC_DIRS "src"
-        PRIV_REQUIRES mbedtls
+        PRIV_REQUIRES mbedtls cbor
         INCLUDE_DIRS "src")
 
 component_compile_options(-std=c++17)

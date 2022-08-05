@@ -11,8 +11,7 @@
 #include <optional>
 #include <vector>
 #include <limits>
-#include "cbor-lite.hpp"
-
+#include <cbor.h>
 using namespace std;
 
 namespace ur {
@@ -52,47 +51,117 @@ vector<ByteVector> FountainEncoder::partition_message(const ByteVector &message,
 
 FountainEncoder::Part::Part(const ByteVector& cbor) {
     try {
-        auto i = cbor.begin();
-        auto end = cbor.end();
-        size_t array_size;
-        CborLite::decodeArraySize(i, end, array_size);
-        if(array_size != 5) { throw InvalidHeader(); }
-        
+
+        CborParser parser;
+        CborValue value;
+        CborError cberr = cbor_parser_init(&cbor[0], cbor.size(), CborValidateCompleteData, &parser, &value);
+        if (cberr != CborNoError || !cbor_value_is_array(&value)) {
+            throw InvalidHeader();
+        }
+        size_t array_len = 0;
+        cberr = cbor_value_get_array_length(&value, &array_len);
+        if (cberr != CborNoError || array_len != 5) {
+            throw InvalidHeader();
+        }
+
+        CborValue arrayItem;
+        cberr = cbor_value_enter_container(&value, &arrayItem);
+        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+            throw InvalidHeader();
+        }
+
         uint64_t n;
-        
-        CborLite::decodeUnsigned(i, end, n);
+        cberr = cbor_value_get_uint64(&arrayItem, &n);
+        if (cberr != CborNoError) {
+            throw InvalidHeader();
+        }
+        cberr = cbor_value_advance(&arrayItem);
+        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+            throw InvalidHeader();
+        }
         if(n > std::numeric_limits<decltype(seq_num_)>::max()) { throw InvalidHeader(); }
         seq_num_ = n;
-        
-        CborLite::decodeUnsigned(i, end, n);
+        cberr = cbor_value_get_uint64(&arrayItem, &n);
+        if (cberr != CborNoError) {
+            throw InvalidHeader();
+        }
         if(n > std::numeric_limits<decltype(seq_len_)>::max()) { throw InvalidHeader(); }
         seq_len_ = n;
-        
-        CborLite::decodeUnsigned(i, end, n);
+
+        cberr = cbor_value_advance(&arrayItem);
+        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+            throw InvalidHeader();
+        }
+        cberr = cbor_value_get_uint64(&arrayItem, &n);
+        if (cberr != CborNoError) {
+            throw InvalidHeader();
+        }
+        cberr = cbor_value_advance(&arrayItem);
+        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+            throw InvalidHeader();
+        }
         if(n > std::numeric_limits<decltype(message_len_)>::max()) { throw InvalidHeader(); }
         message_len_ = n;
-        
-        CborLite::decodeUnsigned(i, end, n);
+        cberr = cbor_value_get_uint64(&arrayItem, &n);
+        if (cberr != CborNoError) {
+            throw InvalidHeader();
+        }
+        cberr = cbor_value_advance(&arrayItem);
+        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_byte_string(&arrayItem)) {
+            throw InvalidHeader();
+        }
+
         if(n > std::numeric_limits<decltype(checksum_)>::max()) { throw InvalidHeader(); }
         checksum_ = n;
 
-        CborLite::decodeBytes(i, end, data_);
+        size_t byteLen = 0;
+        cberr = cbor_value_get_string_length(&arrayItem, &byteLen);
+        if (cberr != CborNoError || byteLen == 0) {
+            throw InvalidHeader();
+        }
+        const size_t oldsize = data_.size();
+        data_.reserve(byteLen + data_.size());
+        data_.resize(byteLen + data_.size());
+        cberr = cbor_value_copy_byte_string(&arrayItem, &data_[oldsize], &byteLen, NULL);
+        if (cberr != CborNoError || byteLen == 0) {
+            throw InvalidHeader();
+        }
+
     } catch(...) {
         throw InvalidHeader();
     }
 }
 
 ByteVector FountainEncoder::Part::cbor() const {
-    using namespace CborLite;
 
     ByteVector result;
+    auto data_res = data();
+    // leave some extra headroom (13 minimum)
+    result.reserve(30 + data_res.size());
+    result.resize(30 + data_res.size());
 
-    encodeArraySize(result, (size_t)5);
-    encodeInteger(result, seq_num());
-    encodeInteger(result, seq_len());
-    encodeInteger(result, message_len());
-    encodeInteger(result, checksum());
-    encodeBytes(result, data());
+    CborEncoder root_encoder;
+    cbor_encoder_init(&root_encoder, &result[0], result.size(), 0);
+    CborEncoder array_encoder;
+    CborError cberr = cbor_encoder_create_array(&root_encoder, &array_encoder, 5);
+    assert(cberr == CborNoError);
+    cberr = cbor_encode_uint(&array_encoder, seq_num());
+    assert(cberr == CborNoError);
+    cberr = cbor_encode_uint(&array_encoder, seq_len());
+    assert(cberr == CborNoError);
+    cberr = cbor_encode_uint(&array_encoder, message_len());
+    assert(cberr == CborNoError);
+    cberr = cbor_encode_uint(&array_encoder, checksum());
+    assert(cberr == CborNoError);
+    cberr = cbor_encode_byte_string(&array_encoder, &data_res[0], data_res.size());
+    assert(cberr == CborNoError);
+
+    cberr = cbor_encoder_close_container(&root_encoder, &array_encoder);
+    assert(cberr == CborNoError);
+
+    const size_t cbor_len = cbor_encoder_get_buffer_size(&root_encoder, &result[0]);
+    assert(cbor_len <= result.size());
+    result.resize(cbor_len);
 
     return result;
 }

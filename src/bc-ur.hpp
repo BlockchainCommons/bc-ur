@@ -19,10 +19,4 @@
 #include "xoshiro256.hpp"
 #include "random-sampler.hpp"
 
-namespace ur {
-
-#include "cbor-lite.hpp"
-
-}
-
 #endif // BC_UR_HPP
