@@ -7,6 +7,53 @@
 
 #include "ur-encoder.hpp"
 #include "bytewords.hpp"
+#include <cstring>
+
+extern "C" {
+
+void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
+    assert(encoder && !*encoder);
+    ur::ByteVector bv;
+    bv.reserve(cbor_len);
+    bv.insert(bv.end(), &cbor[0], &cbor[cbor_len]);
+    ur::UR ur(type, bv);
+    *encoder = new ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
+    assert(*encoder);
+}
+
+void urfree_encoder(void* const encoder) {
+    if (encoder) {
+        ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+        delete urencoder;
+    }
+}
+
+bool uris_complete_encoder(void* const encoder) {
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    return urencoder->is_complete();
+}
+
+bool uris_single_part_encoder(void* const encoder) {
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    return urencoder->is_single_part();
+}
+
+void urnext_part_encoder(void* const encoder, char**next) {
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    std::string encoded = urencoder->next_part();
+    (*next) = (char*)malloc(encoded.size() + 1);
+    strlcpy(*next, encoded.c_str(), encoded.size() + 1);
+}
+
+void urfree_encoded_encoder(char * encoded) {
+    free(encoded);
+}
+
+}
+
 
 using namespace std;
 

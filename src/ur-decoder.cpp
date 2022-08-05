@@ -8,6 +8,58 @@
 #include "ur-decoder.hpp"
 #include "bytewords.hpp"
 
+extern "C" {
+
+void urcreate_decoder(void** const decoder) {
+    assert(decoder && !*decoder);
+    *decoder = new ur::URDecoder();
+    assert(*decoder);
+}
+
+void urfree_decoder(void* const decoder) {
+    if (decoder) {
+        ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+        delete urdecoder;
+    }
+}
+
+bool urreceive_part_decoder(void* const decoder, const char* string) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    const std::string part(string);
+    return urdecoder->receive_part(part);
+}
+
+bool uris_success_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->is_success();
+}
+
+bool uris_failure_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->is_failure();
+}
+
+bool uris_complete_decoder(void* const decoder){
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->is_complete();
+}
+
+void urresult_ur_decoder(void* const decoder, uint8_t** result, size_t* result_len, const char** type) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    const ur::UR& ur = urdecoder->result_ur();
+    (*type) = ur.type().c_str();
+    const ur::ByteVector& res = ur.cbor();
+    (*result) = (uint8_t*)res.data();
+    (*result_len) = res.size();
+}
+
+}
+
 using namespace std;
 
 namespace ur {
