@@ -65,7 +65,7 @@ static const int16_t _lookup[] = {
 
 uint8_t decode_word(const string& word, size_t word_len) {
     if(word.length() != word_len) {
-        throw runtime_error("Invalid Bytewords.");
+        abort();
     }
 
     const size_t dim = 26;
@@ -75,12 +75,12 @@ uint8_t decode_word(const string& word, size_t word_len) {
     int x = tolower(word[0]) - 'a';
     int y = tolower(word[word_len == 4 ? 3 : 1]) - 'a';
     if(!(0 <= x && x < dim && 0 <= y && y < dim)) {
-        throw runtime_error("Invalid Bytewords.");
+        abort();
     }
     size_t offset = y * dim + x;
     int16_t value = _lookup[offset];
     if(value == -1) {
-        throw runtime_error("Invalid Bytewords.");
+        abort();
     }
 
     // If we're decoding a full four-letter word, verify that the two middle letters are correct.
@@ -89,7 +89,7 @@ uint8_t decode_word(const string& word, size_t word_len) {
         int c1 = tolower(word[1]);
         int c2 = tolower(word[2]);
         if(c1 != byteword[1] || c2 != byteword[2]) {
-            throw runtime_error("Invalid Bytewords.");
+            abort();
         }
     }
 
@@ -155,14 +155,14 @@ static const ByteVector _decode(const string& s, char separator, size_t word_len
     ByteVector buf;
     transform(words.begin(), words.end(), back_inserter(buf), [&](auto word) { return decode_word(word, word_len); });
     if(buf.size() < 5) {
-        throw runtime_error("Invalid Bytewords.");
+        abort();
     }
     auto p = split(buf, buf.size() - 4);
     auto body = p.first;
     auto body_checksum = p.second;
     auto checksum = crc32_bytes(body);
     if(checksum != body_checksum) {
-        throw runtime_error("Invalid Bytewords.");
+        abort();
     }
 
     return body;
@@ -177,7 +177,7 @@ string Bytewords::encode(style style, const ByteVector& bytes) {
         case minimal:
             return encode_minimal(bytes);
         default:
-            assert(false);
+            abort();
     }
 }
 
@@ -190,7 +190,7 @@ ByteVector Bytewords::decode(style style, const string& string) {
         case minimal:
             return _decode(string, 0, 2);
         default:
-            assert(false);
+            abort();
     }
 }
 

@@ -50,86 +50,89 @@ vector<ByteVector> FountainEncoder::partition_message(const ByteVector &message,
 }
 
 FountainEncoder::Part::Part(const ByteVector& cbor) {
-    try {
 
-        CborParser parser;
-        CborValue value;
-        CborError cberr = cbor_parser_init(&cbor[0], cbor.size(), CborValidateCompleteData, &parser, &value);
-        if (cberr != CborNoError || !cbor_value_is_array(&value)) {
-            throw InvalidHeader();
-        }
-        size_t array_len = 0;
-        cberr = cbor_value_get_array_length(&value, &array_len);
-        if (cberr != CborNoError || array_len != 5) {
-            throw InvalidHeader();
-        }
+   CborParser parser;
+   CborValue value;
+   CborError cberr = cbor_parser_init(&cbor[0], cbor.size(), CborValidateCompleteData, &parser, &value);
+   if (cberr != CborNoError || !cbor_value_is_array(&value)) {
+       abort();
+   }
+   size_t array_len = 0;
+   cberr = cbor_value_get_array_length(&value, &array_len);
+   if (cberr != CborNoError || array_len != 5) {
+       abort();
+   }
 
-        CborValue arrayItem;
-        cberr = cbor_value_enter_container(&value, &arrayItem);
-        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
-            throw InvalidHeader();
-        }
+   CborValue arrayItem;
+   cberr = cbor_value_enter_container(&value, &arrayItem);
+   if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+       abort();
+   }
 
-        uint64_t n;
-        cberr = cbor_value_get_uint64(&arrayItem, &n);
-        if (cberr != CborNoError) {
-            throw InvalidHeader();
-        }
-        cberr = cbor_value_advance(&arrayItem);
-        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
-            throw InvalidHeader();
-        }
-        if(n > std::numeric_limits<decltype(seq_num_)>::max()) { throw InvalidHeader(); }
-        seq_num_ = n;
-        cberr = cbor_value_get_uint64(&arrayItem, &n);
-        if (cberr != CborNoError) {
-            throw InvalidHeader();
-        }
-        if(n > std::numeric_limits<decltype(seq_len_)>::max()) { throw InvalidHeader(); }
-        seq_len_ = n;
+   uint64_t n;
+   cberr = cbor_value_get_uint64(&arrayItem, &n);
+   if (cberr != CborNoError) {
+       abort();
+   }
+   cberr = cbor_value_advance(&arrayItem);
+   if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+       abort();
+   }
+   if(n > std::numeric_limits<decltype(seq_num_)>::max()) {
+       abort();
+   }
+   seq_num_ = n;
+   cberr = cbor_value_get_uint64(&arrayItem, &n);
+   if (cberr != CborNoError) {
+       abort();
+   }
+   if(n > std::numeric_limits<decltype(seq_len_)>::max()) { 
+       abort();
+   }
+   seq_len_ = n;
 
-        cberr = cbor_value_advance(&arrayItem);
-        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
-            throw InvalidHeader();
-        }
-        cberr = cbor_value_get_uint64(&arrayItem, &n);
-        if (cberr != CborNoError) {
-            throw InvalidHeader();
-        }
-        cberr = cbor_value_advance(&arrayItem);
-        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
-            throw InvalidHeader();
-        }
-        if(n > std::numeric_limits<decltype(message_len_)>::max()) { throw InvalidHeader(); }
-        message_len_ = n;
-        cberr = cbor_value_get_uint64(&arrayItem, &n);
-        if (cberr != CborNoError) {
-            throw InvalidHeader();
-        }
-        cberr = cbor_value_advance(&arrayItem);
-        if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_byte_string(&arrayItem)) {
-            throw InvalidHeader();
-        }
+   cberr = cbor_value_advance(&arrayItem);
+   if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+       abort();
+   }
+   cberr = cbor_value_get_uint64(&arrayItem, &n);
+   if (cberr != CborNoError) {
+       abort();
+   }
+   cberr = cbor_value_advance(&arrayItem);
+   if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_unsigned_integer(&arrayItem)) {
+       abort();
+   }
+   if(n > std::numeric_limits<decltype(message_len_)>::max()) {
+       abort();
+   }
+   message_len_ = n;
+   cberr = cbor_value_get_uint64(&arrayItem, &n);
+   if (cberr != CborNoError) {
+       abort();
+   }
+   cberr = cbor_value_advance(&arrayItem);
+   if (cberr != CborNoError || !cbor_value_is_valid(&arrayItem) || !cbor_value_is_byte_string(&arrayItem)) {
+       abort();
+   }
 
-        if(n > std::numeric_limits<decltype(checksum_)>::max()) { throw InvalidHeader(); }
-        checksum_ = n;
+   if(n > std::numeric_limits<decltype(checksum_)>::max()) {
+       abort();
+   }
+   checksum_ = n;
 
-        size_t byteLen = 0;
-        cberr = cbor_value_get_string_length(&arrayItem, &byteLen);
-        if (cberr != CborNoError || byteLen == 0) {
-            throw InvalidHeader();
-        }
-        const size_t oldsize = data_.size();
-        data_.reserve(byteLen + data_.size());
-        data_.resize(byteLen + data_.size());
-        cberr = cbor_value_copy_byte_string(&arrayItem, &data_[oldsize], &byteLen, NULL);
-        if (cberr != CborNoError || byteLen == 0) {
-            throw InvalidHeader();
-        }
-
-    } catch(...) {
-        throw InvalidHeader();
-    }
+   size_t byteLen = 0;
+   cberr = cbor_value_get_string_length(&arrayItem, &byteLen);
+   if (cberr != CborNoError || byteLen == 0) {
+       abort();
+   }
+   const size_t oldsize = data_.size();
+   data_.reserve(byteLen + data_.size());
+   data_.resize(byteLen + data_.size());
+   cberr = cbor_value_copy_byte_string(&arrayItem, &data_[oldsize], &byteLen, NULL);
+   if (cberr != CborNoError || byteLen == 0) {
+       abort();
+   }
 }
 
 ByteVector FountainEncoder::Part::cbor() const {
