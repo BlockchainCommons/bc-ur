@@ -12,20 +12,16 @@
 extern "C" {
 
 void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
-    assert(encoder && !*encoder);
-    ur::ByteVector bv;
-    bv.reserve(cbor_len);
-    bv.insert(bv.end(), &cbor[0], &cbor[cbor_len]);
+    assert(encoder && !*encoder && cbor_len && type && max_fragment_len && min_fragment_len);
+    ur::ByteVector bv(cbor, cbor + cbor_len);
     ur::UR ur(type, bv);
     *encoder = new ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
     assert(*encoder);
 }
 
 void urcreate_placement_encoder(void* const encoder, size_t encoder_len, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
-    assert(encoder && encoder_len == sizeof(ur::UREncoder));
-    ur::ByteVector bv;
-    bv.reserve(cbor_len);
-    bv.insert(bv.end(), &cbor[0], &cbor[cbor_len]);
+    assert(encoder && encoder_len == sizeof(ur::UREncoder) && cbor_len && type && max_fragment_len && min_fragment_len);
+    ur::ByteVector bv(cbor, cbor + cbor_len);
     ur::UR ur(type, bv);
     void* tmp = new(encoder) ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
     assert(tmp);
