@@ -3,8 +3,12 @@
 
 #include <stddef.h>
 
+#define URDECODER_SIZE 288
+
 int urcreate_decoder(void** const decoder);
+void urcreate_placement_decoder(void* const decoder, size_t decoder_len);
 void urfree_decoder(void* const decoder);
+void urfree_placement_decoder(void* const decoder);
 
 bool urreceive_part_decoder(void* const decoder, const char* string);
 bool uris_success_decoder(void* const decoder);

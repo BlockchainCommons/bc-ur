@@ -16,11 +16,23 @@ void urcreate_decoder(void** const decoder) {
     assert(*decoder);
 }
 
+void urcreate_placement_decoder(void* const decoder, size_t decoder_len) {
+    assert(decoder && decoder_len == sizeof(ur::URDecoder));
+    void* tmp = new(decoder) ur::URDecoder();
+    assert(tmp);
+}
+
 void urfree_decoder(void* const decoder) {
     if (decoder) {
         ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
         delete urdecoder;
     }
+}
+
+void urfree_placement_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    urdecoder->~URDecoder();
 }
 
 bool urreceive_part_decoder(void* const decoder, const char* string) {

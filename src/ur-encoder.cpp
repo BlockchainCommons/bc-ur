@@ -21,11 +21,27 @@ void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbo
     assert(*encoder);
 }
 
+void urcreate_placement_encoder(void* const encoder, size_t encoder_len, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
+    assert(encoder && encoder_len == sizeof(ur::UREncoder));
+    ur::ByteVector bv;
+    bv.reserve(cbor_len);
+    bv.insert(bv.end(), &cbor[0], &cbor[cbor_len]);
+    ur::UR ur(type, bv);
+    void* tmp = new(encoder) ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
+    assert(tmp);
+}
+
 void urfree_encoder(void* const encoder) {
     if (encoder) {
         ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
         delete urencoder;
     }
+}
+
+void urfree_placement_encoder(void* const encoder) {
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    urencoder->~UREncoder();
 }
 
 bool uris_complete_encoder(void* const encoder) {
