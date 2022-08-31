@@ -40,6 +40,20 @@ void urfree_placement_encoder(void* const encoder) {
     urencoder->~UREncoder();
 }
 
+uint32_t urseqnum_encoder(void* const encoder)
+{
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    return urencoder->seq_num();
+}
+
+uint32_t urseqlen_encoder(void* const encoder)
+{
+    assert(encoder);
+    ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
+    return urencoder->seq_len();
+}
+
 bool uris_complete_encoder(void* const encoder) {
     assert(encoder);
     ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
