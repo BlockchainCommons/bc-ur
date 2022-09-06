@@ -66,12 +66,17 @@ bool uris_single_part_encoder(void* const encoder) {
     return urencoder->is_single_part();
 }
 
-void urnext_part_encoder(void* const encoder, char**next) {
+void urnext_part_encoder(void* const encoder, const bool force_uppercase, char**next) {
     assert(encoder);
     ur::UREncoder* urencoder = (ur::UREncoder*) encoder;
     std::string encoded = urencoder->next_part();
     (*next) = (char*)malloc(encoded.size() + 1);
-    strlcpy(*next, encoded.c_str(), encoded.size() + 1);
+    if (force_uppercase) {
+        std::transform(encoded.begin(), encoded.end(), *next, ::toupper);
+        (*next)[encoded.size()] = '\0';  // ensure terminated
+    } else {
+        strlcpy(*next, encoded.c_str(), encoded.size() + 1);
+    }
 }
 
 void urfree_encoded_encoder(char * encoded) {

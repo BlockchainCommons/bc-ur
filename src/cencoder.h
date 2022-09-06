@@ -13,7 +13,7 @@ uint32_t urseqnum_encoder(void* const encoder);
 uint32_t urseqlen_encoder(void* const encoder);
 bool uris_complete_encoder(void* const encoder);
 bool uris_single_part_encoder(void* const encoder);
-void urnext_part_encoder(void* const encoder, char** next);
+void urnext_part_encoder(void* const encoder, bool force_uppercase, char** next);
 void urfree_encoded_encoder(char * encoded);
 
 #endif // BC_UR_CENCODER_H
