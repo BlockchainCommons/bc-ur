@@ -15,7 +15,7 @@ void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbo
     assert(encoder && !*encoder && cbor_len && type && max_fragment_len && min_fragment_len);
     ur::ByteVector bv(cbor, cbor + cbor_len);
     ur::UR ur(type, bv);
-    *encoder = new ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
+    *encoder = new(std::nothrow) ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
     assert(*encoder);
 }
 

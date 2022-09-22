@@ -12,7 +12,7 @@ extern "C" {
 
 void urcreate_decoder(void** const decoder) {
     assert(decoder && !*decoder);
-    *decoder = new ur::URDecoder();
+    *decoder = new(std::nothrow) ur::URDecoder();
     assert(*decoder);
 }
 
