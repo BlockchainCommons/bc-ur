@@ -42,6 +42,30 @@ bool urreceive_part_decoder(void* const decoder, const char* string) {
     return urdecoder->receive_part(part);
 }
 
+size_t urprocessed_parts_count_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->processed_parts_count();
+}
+
+size_t urreceived_parts_count_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->received_part_indexes().size();
+}
+
+size_t urexpected_part_count_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->expected_part_count();
+}
+
+double urestimated_percent_complete_decoder(void* const decoder) {
+    assert(decoder);
+    ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
+    return urdecoder->estimated_percent_complete();
+}
+
 bool uris_success_decoder(void* const decoder) {
     assert(decoder);
     ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
@@ -54,7 +78,7 @@ bool uris_failure_decoder(void* const decoder) {
     return urdecoder->is_failure();
 }
 
-bool uris_complete_decoder(void* const decoder){
+bool uris_complete_decoder(void* const decoder) {
     assert(decoder);
     ur::URDecoder* urdecoder = (ur::URDecoder*) decoder;
     return urdecoder->is_complete();

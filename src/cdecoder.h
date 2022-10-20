@@ -11,6 +11,10 @@ void urfree_decoder(void* const decoder);
 void urfree_placement_decoder(void* const decoder);
 
 bool urreceive_part_decoder(void* const decoder, const char* string);
+size_t urprocessed_parts_count_decoder(void* const decoder);
+size_t urreceived_parts_count_decoder(void* const decoder);
+size_t urexpected_part_count_decoder(void* const decoder);
+double urestimated_percent_complete_decoder(void* const decoder);
 bool uris_success_decoder(void* const decoder);
 bool uris_failure_decoder(void* const decoder);
 bool uris_complete_decoder(void* const decoder);
