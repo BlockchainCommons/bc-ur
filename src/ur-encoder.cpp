@@ -7,12 +7,13 @@
 
 #include "ur-encoder.hpp"
 #include "bytewords.hpp"
+#include "utils.hpp"
 #include <cstring>
 
 extern "C" {
 
 void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
-    assert(encoder && !*encoder && cbor_len && type && max_fragment_len && min_fragment_len);
+    assert(encoder && !*encoder && type && ur::is_ur_type(type) && cbor && cbor_len && max_fragment_len && min_fragment_len && max_fragment_len > min_fragment_len);
     ur::ByteVector bv(cbor, cbor + cbor_len);
     ur::UR ur(type, bv);
     *encoder = new(std::nothrow) ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
@@ -20,7 +21,7 @@ void urcreate_encoder(void** const encoder, const char* type, const uint8_t* cbo
 }
 
 void urcreate_placement_encoder(void* const encoder, size_t encoder_len, const char* type, const uint8_t* cbor, size_t cbor_len, size_t max_fragment_len, uint32_t first_seq_num, size_t min_fragment_len) {
-    assert(encoder && encoder_len == sizeof(ur::UREncoder) && cbor_len && type && max_fragment_len && min_fragment_len);
+    assert(encoder && encoder_len == sizeof(ur::UREncoder) && type && ur::is_ur_type(type) && cbor && cbor_len && max_fragment_len && min_fragment_len && max_fragment_len > min_fragment_len);
     ur::ByteVector bv(cbor, cbor + cbor_len);
     ur::UR ur(type, bv);
     void* tmp = new(encoder) ur::UREncoder(ur, max_fragment_len, first_seq_num, min_fragment_len);
