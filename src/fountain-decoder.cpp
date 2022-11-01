@@ -183,6 +183,8 @@ void FountainDecoder::process_mixed_part(const Part& p) {
 }
 
 bool FountainDecoder::validate_part(const FountainEncoder::Part& p) {
+    if (!p.is_valid()) { return false; }
+
     // If this is the first part we've seen
     if(!_expected_part_indexes.has_value()) {
         // Record the things that all the other parts we see will have to match to be valid.

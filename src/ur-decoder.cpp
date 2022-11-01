@@ -202,7 +202,7 @@ bool URDecoder::receive_part(const std::string& s) {
         return false;
     }
     auto part = FountainEncoder::Part(cbor);
-    if(seq_num != part.seq_num() || seq_len != part.seq_len()) return false;
+    if(!part.is_valid() || seq_num != part.seq_num() || seq_len != part.seq_len()) return false;
 
     // Process the part
     if(!fountain_decoder.receive_part(part)) return false;

@@ -30,6 +30,7 @@ public:
         { }
         explicit Part(const ByteVector& cbor);
 
+        bool is_valid() const { return message_len_ && !data_.empty(); }
         uint32_t seq_num() const { return seq_num_; }
         size_t seq_len() const { return seq_len_; }
         size_t message_len() const { return message_len_; }
