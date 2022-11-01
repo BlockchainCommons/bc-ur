@@ -7,6 +7,7 @@
 
 #include "ur-decoder.hpp"
 #include "bytewords.hpp"
+#include "utils.hpp"
 
 extern "C" {
 
@@ -102,12 +103,7 @@ namespace ur {
 
 UR URDecoder::decode(const string& s) {
     auto [type, components] = parse(s);
-
-    if(components.empty()) {
-       abort();
-    }
-    auto body = components.front();
-
+    auto body = !components.empty() ? components.front() : std::string();
     return decode(type, body);
 }
 
@@ -124,7 +120,7 @@ pair<string, StringVector> URDecoder::parse(const string& s) {
 
     // Validate URI scheme
     if(!has_prefix(lowered, "ur:")) {
-       abort();
+       return pair(string(), StringVector());
     }
     auto path = drop_first(lowered, 3);
 
@@ -133,12 +129,12 @@ pair<string, StringVector> URDecoder::parse(const string& s) {
 
     // Make sure there are at least two path components
     if(components.size() < 2) {
-       abort();
+       return pair(string(), StringVector());
     }
     // Validate the type
     auto type = components.front();
     if(!is_ur_type(type)) {
-       abort();
+       return pair(string(), StringVector());
     }
 
     auto comps = StringVector(components.begin() + 1, components.end());
@@ -148,12 +144,12 @@ pair<string, StringVector> URDecoder::parse(const string& s) {
 pair<uint32_t, size_t> URDecoder::parse_sequence_component(const string& s) {
    auto comps = split(s, '-');
    if(comps.size() != 2) {
-       abort();
+       return pair(0,0);
    }
    uint32_t seq_num = stoul(comps[0]);
    size_t seq_len = stoul(comps[1]);
    if(seq_num < 1 || seq_len < 1) {
-       abort();
+       return pair(0,0);
    }
    return pair(seq_num, seq_len);
 }
@@ -185,7 +181,7 @@ bool URDecoder::receive_part(const std::string& s) {
 
     // Multi-part URs must have two path components: seq/fragment
     if(components.size() != 2) {
-        abort();
+        return false;
     }
     auto seq = components[0];
     auto fragment = components[1];
@@ -193,6 +189,9 @@ bool URDecoder::receive_part(const std::string& s) {
     // Parse the sequence component and the fragment, and
     // make sure they agree.
     auto [seq_num, seq_len] = parse_sequence_component(seq);
+    if (!seq_num || !seq_len) {
+        return false;
+    }
     auto cbor = Bytewords::decode(Bytewords::style::minimal, fragment);
     auto part = FountainEncoder::Part(cbor);
     if(seq_num != part.seq_num() || seq_len != part.seq_len()) return false;
@@ -201,7 +200,9 @@ bool URDecoder::receive_part(const std::string& s) {
     if(!fountain_decoder.receive_part(part)) return false;
 
     if(fountain_decoder.is_success()) {
-        result_ = UR(type, fountain_decoder.result_message());
+        const UR result(type, fountain_decoder.result_message());
+        assert(result.is_valid());
+        result_ = result;
     } else if(fountain_decoder.is_failure()) {
         result_ = fountain_decoder.result_error();
     }

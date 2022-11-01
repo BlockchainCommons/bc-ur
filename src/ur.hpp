@@ -23,6 +23,7 @@ public:
 
     const std::string& type() const { return type_; }
     const ByteVector& cbor() const { return cbor_; }
+    bool is_valid() const;
 
     UR(const std::string& type, const ByteVector& cbor);
 };
