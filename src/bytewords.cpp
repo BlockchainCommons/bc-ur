@@ -63,7 +63,7 @@ static const int16_t _lookup[] = {
     242, -1, -1, -1
 };
 
-uint8_t decode_word(const string& word, size_t word_len) {
+static bool decode_word(const string& word, size_t word_len, uint8_t& output) {
     assert(word.length() == word_len);
     const size_t dim = 26;
 
@@ -72,12 +72,12 @@ uint8_t decode_word(const string& word, size_t word_len) {
     int x = tolower(word[0]) - 'a';
     int y = tolower(word[word_len == 4 ? 3 : 1]) - 'a';
     if(!(0 <= x && x < dim && 0 <= y && y < dim)) {
-        abort();
+        return false;
     }
     size_t offset = y * dim + x;
     int16_t value = _lookup[offset];
     if(value == -1) {
-        abort();
+        return false;
     }
 
     // If we're decoding a full four-letter word, verify that the two middle letters are correct.
@@ -86,12 +86,13 @@ uint8_t decode_word(const string& word, size_t word_len) {
         int c1 = tolower(word[1]);
         int c2 = tolower(word[2]);
         if(c1 != byteword[1] || c2 != byteword[2]) {
-            abort();
+            return false;
         }
     }
 
     // Successful decode.
-    return value;
+    output = value;
+    return true;
 }
 
 static const string get_word(uint8_t index) {
@@ -150,16 +151,24 @@ static const ByteVector _decode(const string& s, char separator, size_t word_len
         words = partition(s, 2);
     }
     ByteVector buf;
-    transform(words.begin(), words.end(), back_inserter(buf), [&](auto word) { return decode_word(word, word_len); });
+    buf.reserve(words.size());
+    for (const auto &word : words) {
+        uint8_t output;
+        if (!decode_word(word, word_len, output)) {
+            // Failed to decode word
+            return ByteVector();
+        }
+        buf.push_back(output);
+    }
     if(buf.size() < 5) {
-        abort();
+        return ByteVector();
     }
     auto p = split(buf, buf.size() - 4);
     auto body = p.first;
     auto body_checksum = p.second;
     auto checksum = crc32_bytes(body);
     if(checksum != body_checksum) {
-        abort();
+        return ByteVector();
     }
 
     return body;

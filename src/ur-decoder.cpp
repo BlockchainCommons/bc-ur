@@ -175,7 +175,12 @@ bool URDecoder::receive_part(const std::string& s) {
     // If this is a single-part UR then we're done
     if(components.size() == 1) {
         auto body = components.front();
-        result_ = decode(type, body);
+        const UR result = decode(type, body);
+        if (!result.is_valid()) {
+            return false;
+        }
+
+        result_ = result;
         return true;
     }
 
@@ -193,6 +198,9 @@ bool URDecoder::receive_part(const std::string& s) {
         return false;
     }
     auto cbor = Bytewords::decode(Bytewords::style::minimal, fragment);
+    if (cbor.empty()) {
+        return false;
+    }
     auto part = FountainEncoder::Part(cbor);
     if(seq_num != part.seq_num() || seq_len != part.seq_len()) return false;
 
