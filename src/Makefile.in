@@ -29,7 +29,7 @@ RESET=`tput sgr0`
 
 COMPILER = g++
 CFLAGS += --debug -O0
-CXXFLAGS += -std=c++17 -stdlib=libc++ --debug -O0
+CXXFLAGS += -std=c++17 --debug -O0
 
 ARFLAGS = rcs
 
