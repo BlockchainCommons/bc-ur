@@ -1,0 +1,5 @@
+bc-ur (0.3.0-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- unknown <nik@unknown>  Sun, 29 Jan 2023 21:31:03 +0300
