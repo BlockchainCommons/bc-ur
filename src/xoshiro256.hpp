@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <array>
 #include <string>
+#include <cstring>
 #include "utils.hpp"
 
 namespace ur {
