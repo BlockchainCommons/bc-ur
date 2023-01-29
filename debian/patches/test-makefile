@@ -1,0 +1,28 @@
+Description: Fix build rules.
+ .
+ bc-ur (0.3.0-1) UNRELEASED; urgency=medium
+ .
+Author:Nicholas Ochiel <nochiel@users.noreply.github.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+--- bc-ur-0.3.0.orig/test/Makefile.in
++++ bc-ur-0.3.0/test/Makefile.in
+@@ -29,12 +29,12 @@ RESET=`tput sgr0`
+ 
+ COMPILER = g++
+ CFLAGS += --debug -O0
+-CXXFLAGS += -std=c++17 -stdlib=libc++ --debug -O0
++CXXFLAGS += -std=c++17 --debug -O0
+ 
+ UNAME := $(shell uname)
+ 
+ ifeq ($(UNAME), Linux)
+-    LDLIBS +=  -lm -lc++ -lc++abi -lgcc_s -lgcc
++    LDLIBS +=  -lm -lstdc++ -lgcc_s -lgcc
+ else ifeq ($(findstring MINGW64, $(UNAME)), MINGW64)
+     # on windows building with msys2/mingw64
+     LDLIBS +=  -lm -lc++ -lws2_32

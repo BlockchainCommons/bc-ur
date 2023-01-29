@@ -1,0 +1,29 @@
+Description: Add missing includes.
+ .
+ bc-ur (0.3.0-1) UNRELEASED; urgency=medium
+ .
+Author:Nicholas Ochiel <nochiel@users.noreply.github.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2023-01-29
+
+--- bc-ur-0.3.0.orig/src/xoshiro256.hpp
++++ bc-ur-0.3.0/src/xoshiro256.hpp
+@@ -11,6 +11,7 @@
+ #include <stdint.h>
+ #include <array>
+ #include <string>
++#include <cstring>
+ #include "utils.hpp"
+ 
+ namespace ur {
