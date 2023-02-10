@@ -30,12 +30,9 @@ ByteVector sha256(const ByteVector &buf) {
     uint8_t digest[SHA256_LEN];
     mbedtls_sha256_context ctx;
     mbedtls_sha256_init(&ctx);
-    int ret = mbedtls_sha256_starts_ret(&ctx, 0);
-    assert(!ret);
-    ret = mbedtls_sha256_update_ret(&ctx, &buf[0], buf.size());                         \
-    assert(!ret);
-    ret = mbedtls_sha256_finish_ret(&ctx, digest);
-    assert(!ret);
+    mbedtls_sha256_starts(&ctx, 0);
+    mbedtls_sha256_update(&ctx, &buf[0], buf.size());
+    mbedtls_sha256_finish(&ctx, digest);
     mbedtls_sha256_free(&ctx);
 
     return ByteVector(digest, digest + SHA256_LEN);
