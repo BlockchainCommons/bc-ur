@@ -9,6 +9,7 @@
 #include "utils.hpp"
 #include <stdexcept>
 #include <algorithm>
+#include <iterator>
 
 namespace ur {
 
@@ -151,6 +152,8 @@ string Bytewords::encode(style style, const ByteVector& bytes) {
         default:
             assert(false);
     }
+
+    return string();
 }
 
 ByteVector Bytewords::decode(style style, const string& string) {
@@ -164,6 +167,8 @@ ByteVector Bytewords::decode(style style, const string& string) {
         default:
             assert(false);
     }
+
+    return ByteVector();
 }
 
 }

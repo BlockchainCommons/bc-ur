@@ -9,6 +9,7 @@
 #include <numeric>
 #include <algorithm>
 #include <assert.h>
+#include <iterator>
 
 using namespace std;
 
