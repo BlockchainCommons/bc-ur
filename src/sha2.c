@@ -87,6 +87,10 @@
 #error Define BYTE_ORDER to be equal to either LITTLE_ENDIAN or BIG_ENDIAN
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint8_t  sha2_byte;	/* Exactly 1 byte */
 typedef uint32_t sha2_word32;	/* Exactly 4 bytes */
 typedef uint64_t sha2_word64;	/* Exactly 8 bytes */

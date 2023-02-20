@@ -7,12 +7,8 @@
 
 #include "utils.hpp"
 
-extern "C" {
-
 #include "sha2.h"
 #include "crc32.h"
-
-}
 
 #include <vector>
 #include <sstream>
