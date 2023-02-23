@@ -15,7 +15,7 @@ namespace ur {
 UR URDecoder::decode(const string& s) {
     auto [type, components] = parse(s);
 
-    if(components.empty()) throw InvalidPathLength();
+    if(components.empty()) return UR(type, ByteVector()); //throw InvalidPathLength();
     auto body = components.front();
 
     return decode(type, body);
@@ -33,34 +33,34 @@ pair<string, StringVector> URDecoder::parse(const string& s) {
     auto lowered = to_lowercase(s);
 
     // Validate URI scheme
-    if(!has_prefix(lowered, "ur:")) throw InvalidScheme();
+    if(!has_prefix(lowered, "ur:")) pair<string, StringVector>(); //throw InvalidScheme();
     auto path = drop_first(lowered, 3);
 
     // Split the remainder into path components
     auto components = split(path, '/');
 
     // Make sure there are at least two path components
-    if(components.size() < 2) throw InvalidPathLength();
+    if(components.size() < 2) pair<string, StringVector>(); //throw InvalidPathLength();
 
     // Validate the type
     auto type = components.front();
-    if(!is_ur_type(type)) throw InvalidType();
+    if(!is_ur_type(type)) pair<string, StringVector>(); //throw InvalidType();
 
     auto comps = StringVector(components.begin() + 1, components.end());
     return pair(type, comps);
 }
 
 pair<uint32_t, size_t> URDecoder::parse_sequence_component(const string& s) {
-    try {
+    //try {
         auto comps = split(s, '-');
-        if(comps.size() != 2) throw InvalidSequenceComponent();
+        if(comps.size() != 2) pair<uint32_t, size_t>(); //throw InvalidSequenceComponent();
         uint32_t seq_num = stoul(comps[0]);
         size_t seq_len = stoul(comps[1]);
-        if(seq_num < 1 || seq_len < 1) throw InvalidSequenceComponent();
+        if(seq_num < 1 || seq_len < 1) pair<uint32_t, size_t>(); //throw InvalidSequenceComponent();
         return pair(seq_num, seq_len);
-    } catch(...) {
-        throw InvalidSequenceComponent();
-    }
+    //} catch(...) {
+    //    throw InvalidSequenceComponent();
+    //}
 }
 
 bool URDecoder::validate_part(const std::string& type) {
@@ -74,7 +74,7 @@ bool URDecoder::validate_part(const std::string& type) {
 }
 
 bool URDecoder::receive_part(const std::string& s) {
-    try {
+    //try {
         // Don't process the part if we're already done
         if(result_.has_value()) return false;
 
@@ -90,7 +90,7 @@ bool URDecoder::receive_part(const std::string& s) {
         }
 
         // Multi-part URs must have two path components: seq/fragment
-        if(components.size() != 2) throw InvalidPathLength();
+        if(components.size() != 2) return false; //throw InvalidPathLength();
         auto seq = components[0];
         auto fragment = components[1];
 
@@ -111,9 +111,9 @@ bool URDecoder::receive_part(const std::string& s) {
         }
 
         return true;
-    } catch(...) {
-        return false;
-    }
+    //} catch(...) {
+    //    return false;
+    //}
 }
 
 }

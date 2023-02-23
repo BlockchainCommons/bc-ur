@@ -51,35 +51,35 @@ vector<ByteVector> FountainEncoder::partition_message(const ByteVector &message,
 }
 
 FountainEncoder::Part::Part(const ByteVector& cbor) {
-    try {
+    //try {
         auto i = cbor.begin();
         auto end = cbor.end();
         size_t array_size;
         CborLite::decodeArraySize(i, end, array_size);
-        if(array_size != 5) { throw InvalidHeader(); }
+        if(array_size != 5) { return;/*throw InvalidHeader();*/ }
         
         uint64_t n;
         
         CborLite::decodeUnsigned(i, end, n);
-        if(n > std::numeric_limits<decltype(seq_num_)>::max()) { throw InvalidHeader(); }
+        if(n > std::numeric_limits<decltype(seq_num_)>::max()) { return; /*throw InvalidHeader();*/ }
         seq_num_ = n;
         
         CborLite::decodeUnsigned(i, end, n);
-        if(n > std::numeric_limits<decltype(seq_len_)>::max()) { throw InvalidHeader(); }
+        if(n > std::numeric_limits<decltype(seq_len_)>::max()) { return;/*throw InvalidHeader();*/ }
         seq_len_ = n;
         
         CborLite::decodeUnsigned(i, end, n);
-        if(n > std::numeric_limits<decltype(message_len_)>::max()) { throw InvalidHeader(); }
+        if(n > std::numeric_limits<decltype(message_len_)>::max()) { return;/*throw InvalidHeader();*/ }
         message_len_ = n;
         
         CborLite::decodeUnsigned(i, end, n);
-        if(n > std::numeric_limits<decltype(checksum_)>::max()) { throw InvalidHeader(); }
+        if(n > std::numeric_limits<decltype(checksum_)>::max()) { return;/*throw InvalidHeader();*/ }
         checksum_ = n;
 
         CborLite::decodeBytes(i, end, data_);
-    } catch(...) {
-        throw InvalidHeader();
-    }
+    //} catch(...) {
+    //    throw InvalidHeader();
+    //}
 }
 
 ByteVector FountainEncoder::Part::cbor() const {
