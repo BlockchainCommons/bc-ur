@@ -51,7 +51,7 @@ public:
     FountainEncoder(const ByteVector& message, size_t max_fragment_len, uint32_t first_seq_num = 0, size_t min_fragment_len = 10);
     
     static size_t find_nominal_fragment_length(size_t message_len, size_t min_fragment_len, size_t max_fragment_len);
-    static std::vector<ByteVector> partition_message(const ByteVector &message, size_t fragment_len);
+    static ByteVectorVector partition_message(const ByteVector &message, size_t fragment_len);
 
     uint32_t seq_num() const { return seq_num_; }
     const PartIndexes& last_part_indexes() const { return last_part_indexes_; }
@@ -70,7 +70,7 @@ private:
     size_t message_len_;
     uint32_t checksum_;
     size_t fragment_len_;
-    std::vector<ByteVector> fragments_;
+    ByteVectorVector fragments_;
     uint32_t seq_num_;
     PartIndexes last_part_indexes_;
 

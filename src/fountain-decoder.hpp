@@ -10,6 +10,7 @@
 
 #include "utils.hpp"
 #include "fountain-encoder.hpp"
+#include "psram-allocator.hpp"
 #include <map>
 #include <exception>
 #include <deque>
@@ -42,7 +43,7 @@ public:
     bool receive_part(FountainEncoder::Part& encoder_part);
 
     // Join all the fragments of a message together, throwing away any padding
-    static const ByteVector join_fragments(const std::vector<ByteVector>& fragments, size_t message_len);
+    static const ByteVector join_fragments(const ByteVectorVector& fragments, size_t message_len);
 
 private:
     class Part {
@@ -66,7 +67,8 @@ private:
 
     Result result_;
 
-    typedef std::map<PartIndexes, Part> PartDict;
+    typedef std::vector<Part, PSRAMAllocator<Part>> PartVector;
+    typedef std::map<PartIndexes, Part, std::less<PartIndexes>, PSRAMAllocator<std::pair<const PartIndexes, Part>>> PartDict;
 
     std::optional<PartIndexes> _expected_part_indexes;
     std::optional<size_t> _expected_fragment_len;
@@ -75,7 +77,7 @@ private:
 
     PartDict _simple_parts;
     PartDict _mixed_parts;
-    std::deque<Part> _queued_parts;
+    std::deque<Part, PSRAMAllocator<Part>> _queued_parts;
 
     void enqueue(const Part &p);
     void enqueue(Part &&p);

@@ -15,10 +15,13 @@
 #include <array>
 #include <assert.h>
 
+#include "psram-allocator.hpp"
+
 namespace ur {
 
-typedef std::vector<uint8_t> ByteVector;
-typedef std::vector<std::string> StringVector;
+typedef std::vector<uint8_t, PSRAMAllocator<uint8_t>> ByteVector;
+typedef std::vector<ByteVector, PSRAMAllocator<ByteVector>> ByteVectorVector;
+typedef std::vector<std::string, PSRAMAllocator<std::string>> StringVector;
 
 ByteVector sha256(const ByteVector &buf);
 ByteVector crc32_bytes(const ByteVector &buf);
@@ -40,39 +43,39 @@ StringVector partition(const std::string& string, size_t size);
 std::string take_first(const std::string &s, size_t count);
 std::string drop_first(const std::string &s, size_t count);
 
-template<typename T>
-void append(std::vector<T>& target, const std::vector<T>& source) {
+template<typename T, typename A>
+void append(std::vector<T, A>& target, const std::vector<T, A>& source) {
     target.insert(target.end(), source.begin(), source.end());
 }
 
-template<typename T, size_t N>
-void append(std::vector<T>& target, const std::array<T, N>& source) {
+template<typename T, typename A, size_t N>
+void append(std::vector<T, A>& target, const std::array<T, N>& source) {
     target.insert(target.end(), source.begin(), source.end());
 }
 
-template<typename T>
-std::vector<T> join(const std::vector<std::vector<T>>& parts) {
-    std::vector<T> result;
+template<typename T, typename A1, typename A2>
+std::vector<T, A1> join(const std::vector<std::vector<T, A1>, A2>& parts) {
+    std::vector<T, A1> result;
     for(auto part: parts) { append(result, part); }
     return result;
 }
 
-template<typename T>
-std::pair<std::vector<T>, std::vector<T>> split(const std::vector<T>& buf, size_t count) {
+template<typename T, typename A>
+std::pair<std::vector<T, A>, std::vector<T, A>> split(const std::vector<T, A>& buf, size_t count) {
     auto first = buf.begin();
     auto c = std::min(buf.size(), count);
     auto last = first + c;
-    auto a = std::vector(first, last);
-    auto b = std::vector(last, buf.end());
+    auto a = std::vector<T, A>(first, last);
+    auto b = std::vector<T, A>(last, buf.end());
     return std::make_pair(a, b);
 }
 
-template<typename T>
-std::vector<T> take_first(const std::vector<T> &buf, size_t count) {
+template<typename T, typename A>
+std::vector<T, A> take_first(const std::vector<T, A> &buf, size_t count) {
     auto first = buf.begin();
     auto c = std::min(buf.size(), count);
     auto last = first + c;
-    return std::vector(first, last);
+    return std::vector<T, A>(first, last);
 }
 
 void xor_into(ByteVector& target, const ByteVector& source);

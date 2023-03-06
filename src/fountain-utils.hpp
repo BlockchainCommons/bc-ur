@@ -14,11 +14,12 @@
 #include <algorithm>
 #include <iterator>
 #include <stdint.h>
+#include "psram-allocator.hpp"
 #include "xoshiro256.hpp"
 
 namespace ur {
 
-typedef std::set<size_t> PartIndexes;
+typedef std::set<size_t, std::less<size_t>, PSRAMAllocator<size_t>> PartIndexes;
 
 // Fisher-Yates shuffle
 template<typename T>
@@ -35,26 +36,26 @@ std::vector<T> shuffled(const std::vector<T>& items, Xoshiro256& rng) {
 }
 
 // Return `true` if `a` is a strict subset of `b`.
-template<typename T>
-bool is_strict_subset(const std::set<T>& a, const std::set<T>& b) {
+template<typename T, typename C, typename A>
+bool is_strict_subset(const std::set<T, C, A>& a, const std::set<T, C, A>& b) {
     if(a == b) { return false; }
     return std::includes(b.begin(), b.end(), a.begin(), a.end());
 }
 
-template<typename T>
-std::set<T> set_difference(const std::set<T>& a, const std::set<T>& b) {
-    std::set<T> result;
+template<typename T, typename C, typename A>
+std::set<T, C, A> set_difference(const std::set<T, C, A>& a, const std::set<T, C, A>& b) {
+    std::set<T, C, A> result;
     std::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::inserter(result, result.begin()));
     return result;
 }
 
-template<typename T>
-bool contains(const std::set<T>& s, const T& v) {
+template<typename T, typename C, typename A>
+bool contains(const std::set<T, C, A>& s, const T& v) {
     return s.find(v) != s.end();
 }
 
 size_t choose_degree(size_t seq_len, Xoshiro256& rng);
-std::set<size_t> choose_fragments(uint32_t seq_num, size_t seq_len, uint32_t checksum);
+PartIndexes choose_fragments(uint32_t seq_num, size_t seq_len, uint32_t checksum);
 
 }
 

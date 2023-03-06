@@ -31,7 +31,7 @@ FountainDecoder::Part::Part(PartIndexes& indexes, ByteVector& data)
 {
 }
 
-const ByteVector FountainDecoder::join_fragments(const vector<ByteVector>& fragments, size_t message_len) {
+const ByteVector FountainDecoder::join_fragments(const ByteVectorVector& fragments, size_t message_len) {
     auto message = join(fragments);
     return take_first(message, message_len);
 }
@@ -90,7 +90,7 @@ void FountainDecoder::process_queue_item() {
 
 void FountainDecoder::reduce_mixed_by(const Part& p) {
     // Reduce all the current mixed parts by the given part
-    vector<Part> reduced_parts;
+    PartVector reduced_parts;
     for(auto i = _mixed_parts.begin(); i != _mixed_parts.end(); i++) {
         reduced_parts.push_back(reduce_part_by_part(i->second, p));
     }
@@ -136,14 +136,14 @@ void FountainDecoder::process_simple_part(Part& p) {
     // If we've received all the parts
     if(received_part_indexes_ == _expected_part_indexes) {
         // Reassemble the message from its fragments
-        vector<Part> sorted_parts;
+        PartVector sorted_parts;
         transform(_simple_parts.begin(), _simple_parts.end(), back_inserter(sorted_parts), [&](auto elem) { return elem.second; });
         sort(sorted_parts.begin(), sorted_parts.end(),
             [](const Part& a, const Part& b) -> bool {
                 return a.index() < b.index();
             }
         );
-        vector<ByteVector> fragments;
+        ByteVectorVector fragments;
         transform(sorted_parts.begin(), sorted_parts.end(), back_inserter(fragments), [&](auto part) { return part.data(); });
         auto message = join_fragments(fragments, *_expected_message_len);
 
