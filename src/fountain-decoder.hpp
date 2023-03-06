@@ -66,7 +66,7 @@ private:
 
     Result result_;
 
-    typedef std::map<PartIndexes, Part> PartDict;
+    typedef std::map<PartIndexes, Part, std::less<PartIndexes>, PSRAMAllocator<std::pair<const PartIndexes, Part>>> PartDict;
 
     std::optional<PartIndexes> _expected_part_indexes;
     std::optional<size_t> _expected_fragment_len;
@@ -75,7 +75,7 @@ private:
 
     PartDict _simple_parts;
     PartDict _mixed_parts;
-    std::deque<Part> _queued_parts;
+    std::deque<Part, PSRAMAllocator<Part>> _queued_parts;
 
     void enqueue(const Part &p);
     void enqueue(Part &&p);
