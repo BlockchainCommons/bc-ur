@@ -62,8 +62,6 @@ bool FountainDecoder::receive_part(FountainEncoder::Part& encoder_part) {
     // Keep track of how many parts we've processed
     processed_parts_count_ += 1;
 
-    //print_part_end();
-
     return true;
 }
 
@@ -77,14 +75,12 @@ void FountainDecoder::enqueue(const Part &p) {
 
 void FountainDecoder::process_queue_item() {
     auto part = _queued_parts.front();
-    //print_part(part);
     _queued_parts.pop_front();
     if(part.is_simple()) {
         process_simple_part(part);
     } else {
         process_mixed_part(part);
     }
-    //print_state();
 }
 
 void FountainDecoder::reduce_mixed_by(const Part& p) {
