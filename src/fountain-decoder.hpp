@@ -87,17 +87,6 @@ private:
     void process_simple_part(Part& p);
     void process_mixed_part(const Part& p);
     bool validate_part(const FountainEncoder::Part& p);
-
-    // debugging
-    static std::string indexes_to_string(const PartIndexes& indexes);
-    std::string result_description() const;
-
-    // cppcheck-suppress unusedPrivateFunction
-    void print_part(const Part& p) const;
-    // cppcheck-suppress unusedPrivateFunction
-    void print_part_end() const;
-    // cppcheck-suppress unusedPrivateFunction
-    void print_state() const;
 };
 
 }

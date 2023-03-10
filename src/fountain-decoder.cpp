@@ -8,7 +8,6 @@
 #include "fountain-decoder.hpp"
 #include <utility>
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <cmath>
 #include <numeric>
@@ -203,53 +202,4 @@ bool FountainDecoder::validate_part(const FountainEncoder::Part& p) {
     // This part should be processed
     return true;
 }
-
-string FountainDecoder::indexes_to_string(const PartIndexes& indexes) {
-    auto i = vector<size_t>(indexes.begin(), indexes.end());
-    sort(i.begin(), i.end());
-    StringVector s;
-    transform(i.begin(), i.end(), back_inserter(s), [](size_t a) { return to_string(a); });
-    return "[" + join(s, ", ") + "]";
-}
-
-void FountainDecoder::print_part(const Part& p) const {
-    cout << "part indexes: " << indexes_to_string(p.indexes()) << endl;
-}
-
-void FountainDecoder::print_part_end() const {
-    auto expected = _expected_part_indexes.has_value() ? to_string(expected_part_count()) : "nil";
-    auto percent = int(round(estimated_percent_complete() * 100));
-    cout << "processed: " << processed_parts_count_ << ", expected: " << expected << ", received: " << received_part_indexes_.size() << ", percent: " << percent << "%" << endl;
-}
-
-string FountainDecoder::result_description() const {
-    string desc;
-    if(!result_.has_value()) {
-        desc = "nil";
-    } else {
-        auto r = *result_;
-        if(holds_alternative<ByteVector>(r)) {
-            desc = to_string(get<ByteVector>(r).size()) + " bytes";
-        } else if(holds_alternative<exception>(r)) {
-            desc = get<exception>(r).what();
-        } else {
-            assert(false);
-        }
-    }
-    return desc;
-}
-
-void FountainDecoder::print_state() const {
-    auto parts = _expected_part_indexes.has_value() ? to_string(expected_part_count()) : "nil";
-    auto received = indexes_to_string(received_part_indexes_);
-    StringVector mixed;
-    transform(_mixed_parts.begin(), _mixed_parts.end(), back_inserter(mixed), [](const pair<const PartIndexes, Part>& p) { 
-        return indexes_to_string(p.first);
-    });
-    auto mixed_s = "[" + join(mixed, ", ") + "]";
-    auto queued = _queued_parts.size();
-    auto res = result_description();
-    cout << "parts: " << parts << ", received: " << received << ", mixed: " << mixed_s << ", queued: " << queued << ", result: " << res << endl;
-}
-
 }

@@ -14,7 +14,6 @@ extern "C" {
 }
 
 #include <vector>
-#include <sstream>
 #include <algorithm>
 #include <cctype>
 #include <mbedtls/sha256.h>
@@ -88,16 +87,25 @@ uint32_t bytes_to_int(const ByteVector& in) {
 }
 
 string join(const StringVector &strings, const string &separator) {
-    ostringstream result;
+    std::string result;
+    size_t total_size = 0;
+    for (const auto& s : strings) {
+        total_size += s.size();
+    }
+    if (!strings.empty()) {
+        result.reserve(total_size
+                        + (separator.size() * (strings.size() - 1))
+                        + 1);  // extra 1 in case of nul-terminator
+    }
     bool first = true;
-    for(auto s: strings) {
-        if(!first) {
-            result << separator;
+    for (const auto& s : strings) {
+        if (!first) {
+            result += separator;
         }
-        result << s;
+        result += s;
         first = false;
     }
-    return result.str();
+    return result;
 }
 
 StringVector split(const string& s, char separator) {
