@@ -23,3 +23,13 @@ jobs:
     - run: export CC="clang-10" && export CXX="clang++-10" && ./configure && make check
     - run: sudo make install
     - run: export CC="clang-10" && export CXX="clang++-10" && make distcheck && make distclean
+
+  build-Linux-cmake:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+    - run: sudo apt-get install -y cmake || exit 1
+    - run: cmake -B build -S . -DENABLE_TESTS:BOOL=TRUE
+    - run: cmake --build build
+    - run: ctest --test-dir build || exit 1
+    - run: cmake --install build --prefix install-dir
