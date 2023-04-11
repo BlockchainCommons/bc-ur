@@ -18,7 +18,7 @@
 
 namespace ur {
 
-class URDecoder final {
+class URDecoder {
 public:
     typedef std::optional<std::variant<UR, std::exception> > Result;
 

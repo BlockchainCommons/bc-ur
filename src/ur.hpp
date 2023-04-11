@@ -14,7 +14,7 @@
 
 namespace ur {
 
-class UR final {
+class UR {
 private:
     std::string type_;
     ByteVector cbor_;
