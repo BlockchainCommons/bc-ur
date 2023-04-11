@@ -69,12 +69,12 @@ uint8_t decode_word(const string& word, size_t word_len) {
     return value;
 }
 
-static const string get_word(uint8_t index) {
-    auto p = &bytewords[index * 4];
-    return string(p, p + 4);
+static string get_word(uint8_t index) {
+    const auto *p = &bytewords[index * 4];
+    return {p, p + 4};
 }
 
-static const string get_minimal_word(uint8_t index) {
+static string get_minimal_word(uint8_t index) {
     string word;
     word.reserve(2);
     auto p = &bytewords[index * 4];
@@ -83,7 +83,7 @@ static const string get_minimal_word(uint8_t index) {
     return word;
 }
 
-static const string encode(const ByteVector& buf, const string& separator) {
+static string encode(const ByteVector& buf, const string& separator) {
     auto len = buf.size();
     StringVector words;
     words.reserve(len);
@@ -94,19 +94,19 @@ static const string encode(const ByteVector& buf, const string& separator) {
     return join(words, separator);
 }
 
-static const ByteVector add_crc(const ByteVector& buf) {
+static ByteVector add_crc(const ByteVector& buf) {
     auto crc_buf = crc32_bytes(buf);
     auto result = buf;
     append(result, crc_buf);
     return result;
 }
 
-static const string encode_with_separator(const ByteVector& buf, const string& separator) {
+static string encode_with_separator(const ByteVector& buf, const string& separator) {
     auto crc_buf = add_crc(buf);
     return encode(crc_buf, separator);
 }
 
-static const string encode_minimal(const ByteVector& buf) {
+static string encode_minimal(const ByteVector& buf) {
     string result;
     auto crc_buf = add_crc(buf);
     auto len = crc_buf.size();
@@ -117,7 +117,7 @@ static const string encode_minimal(const ByteVector& buf) {
     return result;
 }
 
-static const ByteVector _decode(const string& s, char separator, size_t word_len) {
+static ByteVector _decode(const string& s, char separator, size_t word_len) {
     StringVector words;
     if(word_len == 4) {
         words = split(s, separator);
