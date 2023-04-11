@@ -6,7 +6,7 @@
 //
 
 #include "fountain-encoder.hpp"
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 #include <optional>
 #include <vector>

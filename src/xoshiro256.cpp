@@ -130,7 +130,7 @@ void Xoshiro256::jump() {
 	uint64_t s3 = 0;
 	for(int i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
 		for(int b = 0; b < 64; b++) {
-			if (JUMP[i] & UINT64_C(1) << b) {
+			if ((JUMP[i] & UINT64_C(1) << b) != 0u) {
 				s0 ^= s[0];
 				s1 ^= s[1];
 				s2 ^= s[2];
@@ -151,13 +151,13 @@ void Xoshiro256::jump() {
    subsequences for parallel distributed computations. */
 
 void Xoshiro256::long_jump() {
-	static const uint64_t LONG_JUMP[] = { 0x76e15d3efefdcbbf, 0xc5004e441c522fb3, 0x77710069854ee241, 0x39109bb02acbe635 };
+    static const std::array<uint64_t,4> LONG_JUMP = { 0x76e15d3efefdcbbf, 0xc5004e441c522fb3, 0x77710069854ee241, 0x39109bb02acbe635 };
 
 	uint64_t s0 = 0;
 	uint64_t s1 = 0;
 	uint64_t s2 = 0;
 	uint64_t s3 = 0;
-	for(int i = 0; i < sizeof LONG_JUMP / sizeof *LONG_JUMP; i++)
+	for(int i = 0; i < LONG_JUMP.size(); i++)
 		for(int b = 0; b < 64; b++) {
 			if (LONG_JUMP[i] & UINT64_C(1) << b) {
 				s0 ^= s[0];

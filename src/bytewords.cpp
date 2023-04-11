@@ -21,13 +21,13 @@ uint8_t decode_word(const string& word, size_t word_len) {
         throw runtime_error("Invalid Bytewords.");
     }
 
-    static int16_t* array = NULL;
+    static int16_t* array = nullptr;
     const size_t dim = 26;
 
     // Since the first and last letters of each Byteword are unique,
     // we can use them as indexes into a two-dimensional lookup table.
     // This table is generated lazily.
-    if(array == NULL) {
+    if(array == nullptr) {
         const size_t array_len = dim * dim;
         array = (int16_t*)malloc(array_len * sizeof(int16_t));
         for(size_t i = 0; i < array_len; i++) {
@@ -77,7 +77,7 @@ static string get_word(uint8_t index) {
 static string get_minimal_word(uint8_t index) {
     string word;
     word.reserve(2);
-    auto p = &bytewords[index * 4];
+    const auto *p = &bytewords[index * 4];
     word.push_back(*p);
     word.push_back(*(p + 3));
     return word;
@@ -148,9 +148,8 @@ string Bytewords::encode(style style, const ByteVector& bytes) {
             return encode_with_separator(bytes, "-");
         case minimal:
             return encode_minimal(bytes);
-        default:
-            assert(false);
     }
+    assert(false);
 }
 
 ByteVector Bytewords::decode(style style, const string& string) {
@@ -161,9 +160,8 @@ ByteVector Bytewords::decode(style style, const string& string) {
             return _decode(string, '-', 4);
         case minimal:
             return _decode(string, 0, 2);
-        default:
-            assert(false);
     }
+    assert(false);
 }
 
 }
