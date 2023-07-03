@@ -14,7 +14,7 @@
 
 namespace ur {
 
-class UR final {
+class UR {
 private:
     std::string type_;
     ByteVector cbor_;
@@ -24,7 +24,7 @@ public:
     const std::string& type() const { return type_; }
     const ByteVector& cbor() const { return cbor_; }
 
-    UR(const std::string& type, const ByteVector& cbor);
+    UR(std::string type, ByteVector cbor);
 };
 
 bool operator==(const UR& lhs, const UR& rhs);

@@ -15,7 +15,7 @@
 
 namespace ur {
 
-class UREncoder final {
+class UREncoder {
 public:
     // Encode a single-part UR.
     static std::string encode(const UR& ur);

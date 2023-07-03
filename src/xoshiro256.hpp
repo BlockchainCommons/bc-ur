@@ -8,7 +8,7 @@
 #ifndef XOSHIRO256_HPP
 #define XOSHIRO256_HPP
 
-#include <stdint.h>
+#include <cstdint>
 #include <array>
 #include <string>
 #include "utils.hpp"
@@ -34,7 +34,7 @@ public:
     void long_jump();
 
 private:
-    uint64_t s[4];
+    std::array<uint64_t,4> s;
 
     void set_s(const std::array<uint8_t, 32>& a);
     void hash_then_set_s(const ByteVector& bytes);

@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+set_and_check(BC-UR_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+include("${BCUR_LIB_DIR}/cmake/bc-urTargets.cmake")
+set(bc-ur_COMPONENT_FOUND TRUE)
+check_required_components(bc-ur)
