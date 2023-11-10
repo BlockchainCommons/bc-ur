@@ -130,7 +130,7 @@ typename std::enable_if<std::is_class<Buffer>::value, std::size_t>::type encodeT
 template <typename InputIterator>
 typename std::enable_if<std::is_class<InputIterator>::value, std::size_t>::type decodeTagAndAdditional(
     InputIterator& pos, InputIterator end, Tag& tag, Tag& additional, Flags = Flag::none) {
-    if (pos == end) throw Exception("not enough input");
+    if (pos == end) return 0;//throw Exception("not enough input");
     auto octet = *(pos++);
     tag = octet & Major::mask;
     additional = octet & Minor::mask;
@@ -159,7 +159,7 @@ typename std::enable_if<std::is_class<Buffer>::value && std::is_unsigned<Type>::
     case 0:
         return encodeTagAndAdditional(buffer, tag, t);
     default:
-        throw Exception("too long");
+        return 0;//throw Exception("too long");
     }
 
     switch (len) {
@@ -183,7 +183,7 @@ typename std::enable_if<std::is_class<Buffer>::value && std::is_unsigned<Type>::
 template <typename InputIterator, typename Type>
 typename std::enable_if<std::is_class<InputIterator>::value && std::is_unsigned<Type>::value, std::size_t>::type decodeTagAndValue(
     InputIterator& pos, InputIterator end, Tag& tag, Type& t, Flags flags = Flag::none) {
-    if (pos == end) throw Exception("not enough input");
+    if (pos == end) return 0;//throw Exception("not enough input");
     auto additional = Minor::undefined;
     auto len = decodeTagAndAdditional(pos, end, tag, additional, flags);
     if (additional < Minor::length1) {
@@ -193,32 +193,33 @@ typename std::enable_if<std::is_class<InputIterator>::value && std::is_unsigned<
     t = 0u;
     switch (additional) {
     case Minor::length8:
-        if (std::distance(pos, end) < 8) throw Exception("not enough input");
+        if (std::distance(pos, end) < 8) return 0;//throw Exception("not enough input");
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 56;
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 48;
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 40;
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 32;
         len += 4;
-        if ((flags & Flag::requireMinimalEncoding) && !t) throw Exception("encoding not minimal");
+        if ((flags & Flag::requireMinimalEncoding) && !t) return 0; //throw Exception("encoding not minimal");
     case Minor::length4:
-        if (std::distance(pos, end) < 4) throw Exception("not enough input");
+        if (std::distance(pos, end) < 4) return 0; //throw Exception("not enough input");
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 24;
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 16;
         len += 2;
-        if ((flags & Flag::requireMinimalEncoding) && !t) throw Exception("encoding not minimal");
+        if ((flags & Flag::requireMinimalEncoding) && !t) return 0; //throw Exception("encoding not minimal");
     case Minor::length2:
-        if (std::distance(pos, end) < 2) throw Exception("not enough input");
+        if (std::distance(pos, end) < 2) return 0; //throw Exception("not enough input");
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++))) << 8;
         len++;
-        if ((flags & Flag::requireMinimalEncoding) && !t) throw Exception("encoding not minimal");
+        if ((flags & Flag::requireMinimalEncoding) && !t) return 0; //throw Exception("encoding not minimal");
     case Minor::length1:
-        if (std::distance(pos, end) < 1) throw Exception("not enough input");
+        if (std::distance(pos, end) < 1) return 0; //throw Exception("not enough input");
         t |= static_cast<Type>(reinterpret_cast<const unsigned char&>(*(pos++)));
         len++;
-        if ((flags & Flag::requireMinimalEncoding) && t < 24) throw Exception("encoding not minimal");
+        if ((flags & Flag::requireMinimalEncoding) && t < 24) return 0; //throw Exception("encoding not minimal");
         return len;
     }
-    throw Exception("bad additional value");
+    return 0;
+    //throw Exception("bad additional value");
 }
 
 template <typename Buffer, typename Type>
@@ -232,7 +233,7 @@ typename std::enable_if<std::is_class<InputIterator>::value && std::is_unsigned<
 decodeUnsigned(InputIterator& pos, InputIterator end, Type& t, Flags flags = Flag::none) {
     auto tag = undefined;
     auto len = decodeTagAndValue(pos, end, tag, t, flags);
-    if (tag != Major::unsignedInteger) throw Exception("not Unsigned");
+    if (tag != Major::unsignedInteger) return 0; //throw Exception("not Unsigned");
     return len;
 }
 
@@ -247,7 +248,7 @@ typename std::enable_if<std::is_class<InputIterator>::value && std::is_unsigned<
 decodeNegative(InputIterator& pos, InputIterator end, Type& t, Flags flags = Flag::none) {
     auto tag = undefined;
     auto len = decodeTagAndValue(pos, end, tag, t, flags);
-    if (tag != Major::negativeInteger) throw Exception("not Unsigned");
+    if (tag != Major::negativeInteger) return 0; //throw Exception("not Unsigned");
     return len;
 }
 
@@ -277,7 +278,7 @@ decodeInteger(InputIterator& pos, InputIterator end, Type& t, Flags flags = Flag
         t = -1 - static_cast<long long>(val);
         break;
     default:
-        throw Exception("not integer");
+        ;//throw Exception("not integer");
     }
     return len;
 }
@@ -303,9 +304,10 @@ decodeBool(InputIterator& pos, InputIterator end, Type& t, Flags flags = Flag::n
             t = false;
             return len;
         }
-        throw Exception("not Boolean");
+        //throw Exception("not Boolean");
     }
-    throw Exception("not Simple");
+    return 0;
+    //throw Exception("not Simple");
 }
 
 template <typename Buffer, typename Type>
@@ -321,10 +323,10 @@ typename std::enable_if<std::is_class<InputIterator>::value && !std::is_const<Ty
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
-    if (tag != Major::byteString) throw Exception("not ByteString");
+    if (tag != Major::byteString) return 0; //throw Exception("not ByteString");
 
     auto dist = std::distance(pos, end);
-    if (dist < static_cast<decltype(dist)>(value)) throw Exception("not enough input");
+    if (dist < static_cast<decltype(dist)>(value)) return 0; //throw Exception("not enough input");
     t.insert(std::end(t), pos, pos + value);
     std::advance(pos, value);
     return len + value;
@@ -344,11 +346,11 @@ decodeEncodedBytesPrefix(InputIterator& pos, InputIterator end, Type& t, Flags f
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
     if (tag != Major::semantic || value != Minor::cborEncodedData) {
-        throw Exception("not CBOR Encoded Data");
+        return 0;// throw Exception("not CBOR Encoded Data");
     }
     tag = undefined;
     len += decodeTagAndValue(pos, end, tag, value, flags);
-    if (tag != Major::byteString) throw Exception("not ByteString");
+    if (tag != Major::byteString) return 0; //throw Exception("not ByteString");
     t = value;
     return len;
 }
@@ -366,7 +368,7 @@ typename std::enable_if<std::is_class<InputIterator>::value && !std::is_const<Ty
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
     if (tag != Major::semantic || value != Minor::cborEncodedData) {
-        throw Exception("not CBOR Encoded Data");
+        return 0;//throw Exception("not CBOR Encoded Data");
     }
     return len + decodeBytes(pos, end, t, flags);
 }
@@ -384,10 +386,10 @@ typename std::enable_if<std::is_class<InputIterator>::value && !std::is_const<Ty
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
-    if (tag != Major::textString) throw Exception("not TextString");
+    if (tag != Major::textString) return 0; //throw Exception("not TextString");
 
     auto dist = std::distance(pos, end);
-    if (dist < static_cast<decltype(dist)>(value)) throw Exception("not enough input");
+    if (dist < static_cast<decltype(dist)>(value)) return 0; //throw Exception("not enough input");
     t.insert(std::end(t), pos, pos + value);
     std::advance(pos, value);
     return len + value;
@@ -406,7 +408,7 @@ decodeArraySize(InputIterator& pos, InputIterator end, Type& t, Flags flags = Fl
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
-    if (tag != Major::array) throw Exception("not Array");
+    if (tag != Major::array) return 0; //throw Exception("not Array");
     t = value;
     return len;
 }
@@ -424,7 +426,7 @@ decodeMapSize(InputIterator& pos, InputIterator end, Type& t, Flags flags = Flag
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndValue(pos, end, tag, value, flags);
-    if (tag != Major::map) throw Exception("not Map");
+    if (tag != Major::map) return 0; //throw Exception("not Map");
     t = value;
     return len;
 }
@@ -491,9 +493,9 @@ decodeSingleFloat(InputIterator& pos, InputIterator end, Type& t, Flags flags = 
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndAdditional(pos, end, tag, value, flags);
-    if (tag != Major::floatingPoint) throw Exception("not floating-point");
-    if (value != Minor::singleFloat) throw Exception("not single-precision floating-point");
-    if (std::distance(pos, end) < static_cast<int>(sizeof(float))) throw Exception("not enough input");
+    if (tag != Major::floatingPoint) return 0; //throw Exception("not floating-point");
+    if (value != Minor::singleFloat) return 0; //throw Exception("not single-precision floating-point");
+    if (std::distance(pos, end) < static_cast<int>(sizeof(float))) return 0; //throw Exception("not enough input");
 
     char* p;
     float ft;
@@ -525,9 +527,9 @@ decodeDoubleFloat(InputIterator& pos, InputIterator end, Type& t, Flags flags = 
     auto tag = undefined;
     auto value = undefined;
     auto len = decodeTagAndAdditional(pos, end, tag, value, flags);
-    if (tag != Major::floatingPoint) throw Exception("not floating-point");
-    if (value != Minor::doubleFloat) throw Exception("not double-precision floating-point");
-    if (std::distance(pos, end) < static_cast<int>(sizeof(double))) throw Exception("not enough input");
+    if (tag != Major::floatingPoint) return 0; //throw Exception("not floating-point");
+    if (value != Minor::doubleFloat) return 0; //throw Exception("not double-precision floating-point");
+    if (std::distance(pos, end) < static_cast<int>(sizeof(double))) return 0; //throw Exception("not enough input");
 
     char* p;
     double ft;
